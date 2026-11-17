@@ -12,6 +12,18 @@ ROOT = Path(__file__).resolve().parents[1]
 TOKEN = re.compile(r'"(?:\\.|[^"\\])*"|NA')
 
 
+def source_nutrition(row):
+    import math
+    values = {}
+    for key, column in [('calories_kcal', 'Calories'), ('protein_g', 'ProteinContent'), ('carbohydrate_g', 'CarbohydrateContent'), ('fat_g', 'FatContent'), ('fiber_g', 'FiberContent')]:
+        try:
+            number = float(row.get(column, ''))
+            values[key] = number if math.isfinite(number) and number >= 0 else None
+        except (TypeError, ValueError):
+            values[key] = None
+    return {**values, 'basis': 'source_reported_basis_unverified', 'note': 'Original dataset values. Per-serving basis has not been verified; do not divide, rescale or treat as a personal calorie target.'}
+
+
 def parse_r_list(value):
     value = value.strip()
     if value in ('NA', '', 'character(0)', 'c()'):
@@ -89,6 +101,7 @@ def prepare(archive, limit):
                 'ingredient_items': [{'name': name, 'quantity': quantities[i] if i<len(quantities) else None, 'unit': None} for i,name in enumerate(ingredients)],
                 'steps': steps, 'cuisine_tags': [], 'source_category': row['RecipeCategory'],
                 'source_keywords': tags,
+                'nutrition': source_nutrition(row),
                 'data_quality_flags': ['ingredients_not_normalized', 'units_not_separated', 'cuisine_not_inferred', 'source_url_constructed_not_live_verified', 'not_independently_reviewed'] + (['servings_missing'] if servings is None else [])
             }
             output.write(json.dumps(record,ensure_ascii=False)+'\n')

@@ -100,3 +100,13 @@ Provider evaluation includes prior development images from local `output/local-a
 ## Known dependency issue
 
 The current npm audit reports four high-severity findings in the Vite development-tool chain (picomatch/fdir/tinyglobby). The attempted automatic fix did not resolve them. Review and update these dependencies before deployment. Development services bind to loopback only; production hosting, access control, durable image jobs and cancellation are not implemented.
+
+### Lifestyle meal planner
+
+The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions, cooking preference and optional neighborhood.
+
+Plans use source total cooking time and transparent ingredient heuristics (60% selected-goal fit, 40% ingredient coverage). Obvious desserts/drinks are excluded by title/category rules. Budget uses missing ingredient count, not real prices. Calendar seasons provide general prompts, not local harvest/weather claims. This is a single-meal plan; it does not import a calendar, prescribe a calorie deficit or validate an entire day's nutritional adequacy.
+
+Run `backend/.venv/bin/python scripts/backfill_nutrition.py` after the existing data preparation/import to refresh original Calories, ProteinContent, CarbohydrateContent, FatContent and FiberContent for the 5,106 local records. Preparation scripts also preserve these fields for future imports. **Nutrition serving basis remains unverified**, so the interface labels source-reported calories and does not rescale them or use them as personal targets.
+
+Nearby takeout currently offers a user-opened Google Maps search link only. Live business reviews, opening hours, menu nutrition and delivery estimates are **not integrated**; the API explicitly returns `live_provider_not_configured` and no restaurants. General adult activity context links to [CDC guidance](https://www.cdc.gov/physical-activity-basics/guidelines/adults.html); no exercise calorie burn or medical plan is calculated.

@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Literal
 from .dishes import DISH_PATTERNS, matches_dish
+from .planner import GOALS, PlanRequest, plan
 
 from dotenv import load_dotenv
 
@@ -135,6 +136,16 @@ def recommend(request: RecipeRequest):
         results.append({**recipe, "available_ingredients": sorted(matched), "missing_ingredients": sorted(needed - available), "match_factors": factors, "final_score": round(score, 4), "requested_servings": request.servings, "quantity_note": "Quantities and steps retain the original recipe yield; adjust portions manually.", "llm_explanation": None, "generated_image": {"status": "not_requested" if os.getenv("DIFFUSION_MODEL") else "not_configured", "url": None, "is_ai_generated": False}})
     results.sort(key=lambda item: (-item["final_score"], item["recipe_id"]))
     return {"recommendations": results[:request.top_k], "total_candidates": eligible_count, "reranked_candidates": len(results), "confirmed_dish_category": request.dish_category, "category_mapping": "title_keyword_heuristic" if request.dish_category else None, "ranking_method": "hybrid_semantic_v1" if similarities is not None else "ingredient_rules_v1", "semantic_status": "used" if similarities is not None else "unavailable_or_disabled", "dataset_notice": "Food.com records and/or explicitly labeled fixtures, according to dataset selection. Quantities retain source text; aliases and exclusions are limited, not allergy safety guarantees."}
+
+
+@app.get('/api/goals')
+def goals():
+    return [{'id': key, 'label': value[0], 'guidance': value[1]} for key, value in GOALS.items()]
+
+
+@app.post('/api/plan')
+def meal_plan(request: PlanRequest):
+    return plan(request, read_recipes(), normalize)
 
 
 @app.post("/api/explain")

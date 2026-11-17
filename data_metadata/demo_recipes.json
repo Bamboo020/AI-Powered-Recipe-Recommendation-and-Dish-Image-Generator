@@ -1,0 +1,279 @@
+[
+  {
+    "recipe_id": "demo-001",
+    "title": "番茄炒蛋",
+    "total_minutes": 15,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 3,
+        "unit": "个"
+      },
+      {
+        "name": "tomato",
+        "quantity": 2,
+        "unit": "个"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "番茄洗净切块，鸡蛋打散。",
+      "锅中热油，倒入蛋液炒至凝固后盛出。",
+      "加入番茄翻炒至出汁，放回鸡蛋，加盐翻炒均匀，确保鸡蛋熟透。"
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  },
+  {
+    "recipe_id": "demo-002",
+    "title": "番茄鸡蛋炒饭",
+    "total_minutes": 20,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "个"
+      },
+      {
+        "name": "tomato",
+        "quantity": 1,
+        "unit": "个"
+      },
+      {
+        "name": "cooked_rice",
+        "quantity": 2,
+        "unit": "碗"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "番茄切丁，鸡蛋打散，熟米饭拨散。",
+      "热油后炒熟鸡蛋，放入番茄翻炒。",
+      "加入妥善冷藏的熟米饭，翻炒至彻底热透后加盐。"
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  },
+  {
+    "recipe_id": "demo-003",
+    "title": "葱香蛋炒饭",
+    "total_minutes": 12,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "个"
+      },
+      {
+        "name": "cooked_rice",
+        "quantity": 2,
+        "unit": "碗"
+      },
+      {
+        "name": "scallion",
+        "quantity": 1,
+        "unit": "根"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "soy_sauce",
+        "quantity": 1,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "葱切碎，鸡蛋打散。",
+      "热油炒熟鸡蛋，加入妥善冷藏的熟米饭。",
+      "翻炒至米饭彻底热透，加入酱油及葱花拌匀。"
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  },
+  {
+    "recipe_id": "demo-004",
+    "title": "番茄豆腐",
+    "total_minutes": 18,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 2,
+        "unit": "个"
+      },
+      {
+        "name": "tofu",
+        "quantity": 300,
+        "unit": "克"
+      },
+      {
+        "name": "garlic",
+        "quantity": 2,
+        "unit": "瓣"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "豆腐切块，番茄切丁，大蒜切碎。",
+      "热油炒香大蒜，加入番茄炒出汁。",
+      "加入豆腐与少量水，小火煮至豆腐充分热透后调味。"
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  },
+  {
+    "recipe_id": "demo-005",
+    "title": "番茄鸡蛋面",
+    "total_minutes": 15,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 1,
+        "unit": "个"
+      },
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "个"
+      },
+      {
+        "name": "noodles",
+        "quantity": 200,
+        "unit": "克"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "热油炒熟打散的鸡蛋，盛出。",
+      "炒软番茄，加入水煮沸。",
+      "加入面条，按包装时间煮熟，放入鸡蛋并调味。"
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  },
+  {
+    "recipe_id": "demo-006",
+    "title": "意式番茄面",
+    "total_minutes": 25,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 3,
+        "unit": "个"
+      },
+      {
+        "name": "noodles",
+        "quantity": 200,
+        "unit": "克"
+      },
+      {
+        "name": "garlic",
+        "quantity": 2,
+        "unit": "瓣"
+      },
+      {
+        "name": "olive_oil",
+        "quantity": 1,
+        "unit": "汤匙"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "茶匙"
+      }
+    ],
+    "steps": [
+      "按包装说明煮熟意面。",
+      "橄榄油炒香蒜末，加入番茄煮软。",
+      "将熟面条与番茄汁拌匀，加盐调味。"
+    ],
+    "cuisine_tags": [
+      "italian"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ]
+  }
+]

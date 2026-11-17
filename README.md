@@ -7,10 +7,10 @@ A CSYE 7380 project in progress. Start with ingredients, discover up to three re
 - React + Vite responsive Chinese interface with ingredient input, cooking time, cuisine preference, servings, exclusions, result cards, and recipe detail.
 - FastAPI + SQLite repository with six explicitly labeled project-authored illustrative recipes.
 - Chinese/English ingredient normalization, strict time/exclusion filtering, deterministic explainable ranking, and empty/error states.
-- Template explanation fallback. Unconfigured Diffusion and CNN endpoints return HTTP 503 rather than fabricated model outputs.
+- Optional SentenceTransformer reranking, Ollama explanation, Diffusers generation and custom ResNet18 classification, with explicit disabled/error states.
 - API validation tests and GitHub Actions checks.
 
-**This is a runnable foundation, not a completed AI system.** No Food.com data, semantic encoder, trained CNN, LLM, or Diffusion model is bundled. Demo recipes are unreviewed fixtures. Exclusion matching is exact after aliases and is not an allergy safety guarantee. Servings are captured, but ingredient quantities retain the original recipe yield.
+**This is a runnable foundation, not a completed AI system.** No Food.com data or model weights are bundled. Optional AI adapters are implemented; see [AI setup](docs/ai-architecture.md). Demo recipes are unreviewed fixtures. Exclusion matching is exact after aliases and is not an allergy safety guarantee. Servings are captured, but ingredient quantities retain the original recipe yield.
 
 ## Quick start
 
@@ -60,7 +60,7 @@ evaluation/     Evaluation protocol (no fabricated metrics)
 docs/           Architecture and milestone plan
 ```
 
-See [architecture](docs/architecture.md), [roadmap](docs/roadmap.md), and [data notes](data_metadata/README.md). No credentials or model weights should be committed. Use local environment variables when adding providers.
+See [architecture](docs/architecture.md), [roadmap](docs/roadmap.md), and [data notes](data_metadata/README.md). No credentials or model weights should be committed. See `.env.example` for opt-in provider settings. Use local environment variables when adding providers.
 
 ## Known dependency issue
 

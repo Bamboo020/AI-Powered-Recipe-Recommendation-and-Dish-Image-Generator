@@ -1,0 +1,58 @@
+# AI architecture v0.2
+
+## Request paths
+
+```mermaid
+flowchart TD
+  UI[React UI] --> API[FastAPI orchestration]
+  API --> SQL[SQLite source recipes]
+  SQL --> Filter[Time and excluded ingredient filters]
+  Filter --> Encoder[Optional Sentence Transformer cosine scores]
+  Encoder --> Rank[Hybrid ranking or rule fallback]
+  Rank --> UI
+  API --> LLM[Ollama grounded explanation]
+  LLM --> Fallback[Template on failure]
+  API --> Diffusion[Local Diffusers SDXL Turbo adapter]
+  Diffusion --> Assets[Generated PNG with AI label]
+  API --> CNN[ResNet18 checkpoint and ordered labels]
+  CNN --> Confirm[Top-3 classes requiring confirmation]
+```
+
+## Configuration
+
+Base mode needs only `backend/requirements.lock.txt`. Optional inference dependencies are in `backend/requirements-ai.txt`; they are not yet validated as a locked GPU environment. Install them into a separate environment suitable for your hardware. CPU is the default; set `AI_DEVICE=cuda` or `mps` only if your installed runtime supports it. CNN currently runs on CPU.
+
+Export environment variables before starting the backend. `.env.example` is a reference, not an automatically loaded file. Missing configuration disables each provider independently. `/api/health` distinguishes `not_configured` from `configured_unverified`; configuration is not a readiness check.
+
+### Encoder Transformer
+
+Set `EMBEDDING_MODEL` to a local SentenceTransformer directory or a Hugging Face ID. For the Chinese interface, start by evaluating `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Initial request may download weights. Model loading is lazy. Normalized document embeddings are cached in process for up to eight corpus snapshots; changing records changes the cache key. Query and recipe vectors use dot product/cosine, clamped to [0,1].
+
+Hard filters and the requirement of at least one exact normalized ingredient match are applied before encoding. This is semantic reranking of eligible candidates, not unrestricted semantic recall. Hybrid weights: ingredient .40, time .25, cuisine .20, semantic .15. If encoding fails, use original .60/.20/.20 rule weights and report the actual ranking method. No model metrics have been measured.
+
+### LLM
+
+Start your own Ollama service, provision a compatible model, then export `OLLAMA_MODEL` and optionally `OLLAMA_BASE_URL` (default loopback port 11434). No model is downloaded by this adapter. It calls `/api/chat` with streaming disabled, a 5-second connect and 60-second HTTP operation timeout, a bounded token budget, and the selected recipe as data. Output is labeled as LLM-generated and cites the source record ID. Prompt grounding reduces unsupported statements but does not guarantee factual consistency; no automated factual verifier exists. Failures return a labeled template and preserve original steps.
+
+### Diffusion
+
+Set `DIFFUSION_MODEL` to a compatible SDXL Turbo pipeline, for example `stabilityai/sdxl-turbo`, only after verifying license and hardware. Adapter parameters are model-specific: 512px, four steps, guidance 0. Other pipelines may need a different adapter. CUDA uses float16; CPU/MPS use float32. First call may download weights. Generation is synchronous, one request per process; concurrent requests return 503. Generated PNGs are saved under ignored `generated/`, served at `/generated/`, and explicitly labeled AI-generated in the UI.
+
+There is no durable job queue, cancellation, inference deadline, retention policy, or multi-process concurrency control. Slow generation can exceed browser/proxy timeouts. Use this only for local development until those concerns are addressed.
+
+### CNN
+
+Set `CNN_CHECKPOINT` to a trusted ResNet18 state_dict with a classification head matching the ordered JSON string list at `CNN_LABELS_PATH`. Checkpoint loading uses `weights_only=True`; no random/ImageNet output is relabeled as Food-101. Preprocessing currently follows `ResNet18_Weights.DEFAULT.transforms()`; training must use compatible evaluation normalization/resize conventions. There is no trained checkpoint or training implementation in this change.
+
+`POST /api/classify-food` takes a raw JPEG/PNG/WebP request body, limited to 5 MB and 16 megapixels. Top-3 softmax scores are not calibrated confidence guarantees. Response requires user category confirmation; the .6 low-confidence threshold is a heuristic. The photo-upload UI, class-to-recipe mapping, and confirmed category retrieval are still pending.
+
+## Validation boundary
+
+Automated tests exercise the rule/semantic switch, hard filtering, mocked Ollama success/timeouts, semantic loading failure, generated asset handling with a fake pipeline, and upload limits. They do not validate actual model weights, inference quality, hardware compatibility, or latency. Provider failures are logged server-side without returning internal exception details.
+
+## References
+
+- SentenceTransformer API: https://www.sbert.net/docs/package_reference/sentence_transformer/model.html
+- Ollama chat API: https://docs.ollama.com/api/chat
+- Diffusers AutoPipeline: https://huggingface.co/docs/diffusers/main/tutorials/autopipeline
+- Torchvision ResNet: https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py

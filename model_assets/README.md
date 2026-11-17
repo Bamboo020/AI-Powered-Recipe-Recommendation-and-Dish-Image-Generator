@@ -1,3 +1,3 @@
 # Model assets
 
-No weights are included. Planned modules: sentence-transformers encoder, Food-101 CNN classifier, grounded LLM explanation provider, and Diffusion generator. Record model identifiers, revisions, licenses, hardware, latency, and whether weights were pretrained or trained by the team when each is integrated.
+Optional inference adapters are in `backend/app/ai/services.py`. Setup and limits: [AI architecture](../docs/ai-architecture.md). No weights or trained checkpoint are included. Record actual model identifiers, revisions, licenses, preprocessing, hardware, latency and measured evaluation when provisioning each model.

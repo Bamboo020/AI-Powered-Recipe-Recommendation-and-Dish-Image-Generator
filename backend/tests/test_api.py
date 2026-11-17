@@ -1,7 +1,3 @@
-import os
-from pathlib import Path
-import tempfile
-os.environ["RECIPE_DB_PATH"] = str(Path(tempfile.mkdtemp()) / "test.sqlite3")
 from fastapi.testclient import TestClient
 from app.main import app
 

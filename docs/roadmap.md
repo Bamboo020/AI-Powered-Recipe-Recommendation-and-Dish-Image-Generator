@@ -6,6 +6,13 @@
 - SQLite fixture repository, normalization, hard filters, and rule baseline.
 - Validation and provider-unavailable behavior.
 
+## Implemented AI adapters (model validation pending)
+- Optional cached sentence embeddings and hybrid reranking with rule fallback.
+- Ollama explanation adapter and template fallback.
+- SDXL Turbo Diffusers adapter and AI-labeled generated assets.
+- Custom ResNet18 checkpoint inference and bounded raw-image API.
+- Provider contract and failure tests; no real inference evaluation yet.
+
 ## Next: real data and retrieval
 - Obtain the Food.com dataset through its source and record license/access terms.
 - Implement validated import with source IDs/URLs, parsing, duplicate handling, missing-time flags, and ingredient normalization.

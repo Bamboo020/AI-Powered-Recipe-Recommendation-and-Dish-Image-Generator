@@ -6,3 +6,7 @@ node_modules/
 dist/
 *.sqlite3
 .DS_Store
+generated/
+*.pt
+*.pth
+*.safetensors

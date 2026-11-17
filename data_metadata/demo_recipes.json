@@ -39,7 +39,8 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Chinese stir fried tomato chunks mixed with fully cooked scrambled eggs"
   },
   {
     "recipe_id": "demo-002",
@@ -86,7 +87,8 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Chinese tomato and egg fried rice, individual cooked rice grains stir-fried and mixed with small pieces of scrambled egg and diced cooked tomato"
   },
   {
     "recipe_id": "demo-003",
@@ -133,7 +135,8 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Chinese egg fried rice, cooked rice grains stir-fried with scrambled egg pieces and chopped scallion"
   },
   {
     "recipe_id": "demo-004",
@@ -180,7 +183,8 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Chinese braised tofu cubes in cooked tomato sauce"
   },
   {
     "recipe_id": "demo-005",
@@ -227,7 +231,8 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Chinese noodle soup with cooked scrambled egg pieces and tomato chunks"
   },
   {
     "recipe_id": "demo-006",
@@ -274,6 +279,7 @@
     "data_quality_flags": [
       "illustrative_not_dataset_record",
       "not_human_verified"
-    ]
+    ],
+    "image_description_en": "Italian pasta noodles coated in cooked tomato and garlic sauce"
   }
 ]

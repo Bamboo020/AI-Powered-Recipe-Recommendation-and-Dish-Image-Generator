@@ -22,11 +22,13 @@ flowchart TD
 
 Base mode needs only `backend/requirements.lock.txt`. Optional inference dependencies are in `backend/requirements-ai.txt`; they are not yet validated as a locked GPU environment. Install them into a separate environment suitable for your hardware. CPU is the default; set `AI_DEVICE=cuda` or `mps` only if your installed runtime supports it. CNN currently runs on CPU.
 
-Export environment variables before starting the backend. `.env.example` is a reference, not an automatically loaded file. Missing configuration disables each provider independently. `/api/health` distinguishes `not_configured` from `configured_unverified`; configuration is not a readiness check.
+Export environment variables before starting the backend. Copy `.env.example` to the ignored root `.env`; the API loads it on startup. Missing configuration disables each provider independently. `/api/health` distinguishes `not_configured` from `configured_unverified`; configuration is not a readiness check.
 
 ### Encoder Transformer
 
-Set `EMBEDDING_MODEL` to a local SentenceTransformer directory or a Hugging Face ID. For the Chinese interface, start by evaluating `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Initial request may download weights. Model loading is lazy. Normalized document embeddings are cached in process for up to eight corpus snapshots; changing records changes the cache key. Query and recipe vectors use dot product/cosine, clamped to [0,1].
+For Ollama embeddings, set `OLLAMA_EMBED_MODEL=nomic-embed-text:latest`; the adapter calls `/api/embed` with document/query prefixes, normalizes vectors, and caches documents. This takes precedence over SentenceTransformer when both are set. This English-oriented model is a functional local baseline, not validated Chinese retrieval.
+
+Alternatively set `EMBEDDING_MODEL` to a local SentenceTransformer directory or a Hugging Face ID. For the Chinese interface, start by evaluating `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Initial request may download weights. Model loading is lazy. Normalized document embeddings are cached in process for up to eight corpus snapshots; changing records changes the cache key. Query and recipe vectors use dot product/cosine, clamped to [0,1].
 
 Hard filters and the requirement of at least one exact normalized ingredient match are applied before encoding. This is semantic reranking of eligible candidates, not unrestricted semantic recall. Hybrid weights: ingredient .40, time .25, cuisine .20, semantic .15. If encoding fails, use original .60/.20/.20 rule weights and report the actual ranking method. No model metrics have been measured.
 
@@ -36,7 +38,7 @@ Start your own Ollama service, provision a compatible model, then export `OLLAMA
 
 ### Diffusion
 
-Set `DIFFUSION_MODEL` to a compatible SDXL Turbo pipeline, for example `stabilityai/sdxl-turbo`, only after verifying license and hardware. Adapter parameters are model-specific: 512px, four steps, guidance 0. Other pipelines may need a different adapter. CUDA uses float16; CPU/MPS use float32. First call may download weights. Generation is synchronous, one request per process; concurrent requests return 503. Generated PNGs are saved under ignored `generated/`, served at `/generated/`, and explicitly labeled AI-generated in the UI.
+Set `DIFFUSION_MODEL` to a compatible SDXL Turbo pipeline, for example `stabilityai/sdxl-turbo`, only after verifying license and hardware. Parameters are configurable: `DIFFUSION_STEPS` (default 4), `DIFFUSION_GUIDANCE` (default 0), 512px. For SD 1.5 use 20 steps and guidance 7.5. CUDA uses float16; CPU/MPS use float32; MPS enables attention slicing. First call may download weights. Generation is synchronous, one request per process; concurrent requests return 503. Generated PNGs are saved under ignored `generated/`, served at `/generated/`, and explicitly labeled AI-generated in the UI.
 
 There is no durable job queue, cancellation, inference deadline, retention policy, or multi-process concurrency control. Slow generation can exceed browser/proxy timeouts. Use this only for local development until those concerns are addressed.
 
@@ -56,3 +58,7 @@ Automated tests exercise the rule/semantic switch, hard filtering, mocked Ollama
 - Ollama chat API: https://docs.ollama.com/api/chat
 - Diffusers AutoPipeline: https://huggingface.co/docs/diffusers/main/tutorials/autopipeline
 - Torchvision ResNet: https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
+
+Ollama requests use `keep_alive=0s` to release model memory after requests on a 16GB machine. Cached document vectors remain in the API process. Restart the API after changing configuration.
+
+By default `DIFFUSION_UNLOAD_AFTER_GENERATION=1` clears cached pipeline weights after a job to free GPU memory for the LLM; set 0 only when sufficient memory is available. Local inference dependency versions are recorded in `backend/requirements-local-ai.lock.txt` for this Apple silicon/Python 3.13 environment; it is separate from the base CI dependency set.

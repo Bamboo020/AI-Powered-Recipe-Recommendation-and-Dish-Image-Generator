@@ -12,6 +12,10 @@ A CSYE 7380 project in progress. Start with ingredients, discover up to three re
 
 **This is a runnable foundation, not a completed AI system.** No Food.com data or model weights are bundled. Optional AI adapters are implemented; see [AI setup](docs/ai-architecture.md). Demo recipes are unreviewed fixtures. Exclusion matching is exact after aliases and is not an allergy safety guarantee. Servings are captured, but ingredient quantities retain the original recipe yield.
 
+[本机配置与实测](docs/local-setup.zh.md)。
+
+整体架构与中文运行说明：[系统架构](docs/system-architecture.zh.md)。
+
 ## Quick start
 
 Use Python 3.11+ and Node.js 20.19+ (or 22.12+).

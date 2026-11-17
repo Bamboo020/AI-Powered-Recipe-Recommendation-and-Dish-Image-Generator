@@ -61,3 +61,20 @@ def test_image_upload_limit():
     with TestClient(main.app) as client:
         response=client.post('/api/classify-food',content=b'x'*(5*1024*1024+1))
         assert response.status_code==413
+
+
+def test_ollama_embeddings_are_used_and_cached(monkeypatch):
+    monkeypatch.setenv('OLLAMA_EMBED_MODEL','test-embed')
+    services.ollama_document_embeddings.cache_clear()
+    calls=[]
+    def embed(url, **kwargs):
+        calls.append(kwargs['json']['input'])
+        return httpx.Response(200,json={'embeddings':[[3.,4.] for _ in kwargs['json']['input']]},request=httpx.Request('POST',url))
+    monkeypatch.setattr(services.httpx,'post',embed)
+    recipes=[{'title':'test','ingredient_items':[], 'cuisine_tags':[]}]
+    assert services.semantic_scores('egg',recipes)==[1.]
+    assert services.semantic_scores('tomato',recipes)==[1.]
+    assert len(calls)==3
+    assert calls[0][0].startswith('search_document: ')
+    assert calls[1][0].startswith('search_query: ')
+    services.ollama_document_embeddings.cache_clear()

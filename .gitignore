@@ -10,3 +10,4 @@ generated/
 *.pt
 *.pth
 *.safetensors
+output/

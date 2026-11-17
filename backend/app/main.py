@@ -10,7 +10,10 @@ from .ai.services import AIUnavailable, configured_services, semantic_scores, ex
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
+from dotenv import load_dotenv
+
 ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(ROOT / ".env")
 DB_PATH = Path(os.getenv("RECIPE_DB_PATH", str(ROOT / "recipes.sqlite3")))
 ALIASES = {
     "eggs": "egg", "鸡蛋": "egg", "番茄": "tomato", "西红柿": "tomato",
@@ -107,7 +110,7 @@ def recommend(request: RecipeRequest):
         if similarities is not None:
             factors["semantic_similarity"] = round(similarities[index], 4)
             score = .4 * coverage + .25 * time_fit + .2 * cuisine_fit + .15 * similarities[index]
-        results.append({**recipe, "available_ingredients": sorted(matched), "missing_ingredients": sorted(needed - available), "match_factors": factors, "final_score": round(score, 4), "requested_servings": request.servings, "quantity_note": "Quantities and steps retain the original recipe yield; adjust portions manually.", "llm_explanation": None, "generated_image": {"status": "not_configured", "url": None, "is_ai_generated": False}})
+        results.append({**recipe, "available_ingredients": sorted(matched), "missing_ingredients": sorted(needed - available), "match_factors": factors, "final_score": round(score, 4), "requested_servings": request.servings, "quantity_note": "Quantities and steps retain the original recipe yield; adjust portions manually.", "llm_explanation": None, "generated_image": {"status": "not_requested" if os.getenv("DIFFUSION_MODEL") else "not_configured", "url": None, "is_ai_generated": False}})
     results.sort(key=lambda item: (-item["final_score"], item["recipe_id"]))
     return {"recommendations": results[:request.top_k], "total_candidates": len(results), "ranking_method": "hybrid_semantic_v1" if similarities is not None else "ingredient_rules_v1", "semantic_status": "used" if similarities is not None else "unavailable_or_disabled", "dataset_notice": "Illustrative project fixtures, not imported Food.com records. Not validated dietary or allergy advice."}
 

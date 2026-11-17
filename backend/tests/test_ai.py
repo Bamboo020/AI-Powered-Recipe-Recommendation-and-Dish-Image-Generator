@@ -23,7 +23,7 @@ def test_llm_success_and_timeout(monkeypatch):
     def success(url, **kwargs):
         assert kwargs['json']['stream'] is False
         assert 'demo-001' in kwargs['json']['messages'][1]['content']
-        return httpx.Response(200,json={'message':{'content':'基于原食谱的说明'}},request=httpx.Request('POST',url))
+        return httpx.Response(200,json={'message':{'content':'{"recipe_id":"demo-001","explanation":"基于原食谱的说明"}'}},request=httpx.Request('POST',url))
     monkeypatch.setattr(services.httpx,'post',success)
     with TestClient(main.app) as client:
         data = client.post('/api/explain',json={'recipe_id':'demo-001'}).json()

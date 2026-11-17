@@ -23,4 +23,6 @@ Coverage = matched / all listed ingredients (including oil/salt). Time fit = 1 â
 
 ## Remaining work
 
-Real dataset import, confirmed CNN category mapping and upload UI, model provisioning, measured evaluation, durable generation jobs and production deployment remain pending. No credentials or weights are bundled.
+Real dataset import, five-class CNN training/evaluation, confirmed category mapping and upload UI are implemented. Durable generation jobs, human relevance evaluation and production deployment remain pending. No credentials or weights are bundled.
+
+Version 0.3 adds `dataset` (real/demo/all) and optional confirmed `dish_category` to recommendation requests. Ingredients can be empty only with a supported confirmed category. Semantic reranking is capped at 128 rule-shortlisted candidates. Photo category mapping uses explicit title/source-category rules and excludes obvious dessert/dough mismatches.

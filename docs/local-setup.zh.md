@@ -7,7 +7,7 @@
 | 语义向量 | Ollama `nomic-embed-text:latest` | 推荐返回 hybrid_semantic_v1；首次约 1.98 秒 |
 | LLM | Ollama `qwen2.5:7b` | 返回真实中文说明，约 15.38 秒 |
 | Diffusion | 本地 Stable Diffusion 1.5 缓存，MPS、20 步、guidance 7.5、512px | 首次成功保存 PNG，含导入/加载约 90.53 秒，采样约 29 秒 |
-| CNN | 未配置 | 缺少匹配类别顺序的训练权重；不输出随机预测 |
+| CNN | 本地五类 ResNet18 权重与有序 labels.json | 已训练分类头；官方测试 Top-1 91.60% |
 
 以上是单次功能验证，不是性能基准或质量评估。首次图片偏离炒饭外观，因而为演示记录增加了英文菜品视觉描述；调整后第二次生成耗时约 32.55 秒（采样约 21 秒），仍需人工核对生成内容。
 
@@ -32,12 +32,12 @@ npm run dev
 
 ## 限制与下一步
 
-- 食谱库仍只有六条带明确来源标注的演示记录；真实数据导入尚未完成。
+- 食谱库已有 5,106 条真实 Food.com 记录，另有六条单独标记的样例。
 - nomic 是本机现有的功能基线；中文检索质量尚未评估，可换多语言 SentenceTransformer。
-- LLM 与 Diffusion 是预训练模型推理，未自行训练；LLM 文字仍需核对。
+- LLM 与 Diffusion 是预训练模型推理；CNN 只训练了分类头；LLM 文字仍需核对。
 - 图像生成是同步单图接口，没有持久化任务队列与取消功能。
 - Ollama 请求结束卸载模型，Diffusion 默认在生成后释放缓存权重，以降低统一内存压力。
-- CNN 推理适配器存在，但需要可信的 ResNet18 食物分类 state_dict、对应的有序类别 JSON 和评估记录，之后再配置 `CNN_CHECKPOINT` 与 `CNN_LABELS_PATH`。
+- `CNN_CHECKPOINT` 和 `CNN_LABELS_PATH` 已配置本机五类权重；重现流程见 README。
 - 完整依赖快照在 `backend/requirements-local-ai.lock.txt`，对应本机环境；基础 CI 仍使用独立的轻量依赖。
 
 整体结构见 [系统架构](system-architecture.zh.md)。原始实测响应保存在忽略目录 `output/local-ai-smoke.json`，生成图片位于忽略目录 `generated/`。

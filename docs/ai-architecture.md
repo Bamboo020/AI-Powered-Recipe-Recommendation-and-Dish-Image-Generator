@@ -44,13 +44,13 @@ There is no durable job queue, cancellation, inference deadline, retention polic
 
 ### CNN
 
-Set `CNN_CHECKPOINT` to a trusted ResNet18 state_dict with a classification head matching the ordered JSON string list at `CNN_LABELS_PATH`. Checkpoint loading uses `weights_only=True`; no random/ImageNet output is relabeled as Food-101. Preprocessing currently follows `ResNet18_Weights.DEFAULT.transforms()`; training must use compatible evaluation normalization/resize conventions. There is no trained checkpoint or training implementation in this change.
+Set `CNN_CHECKPOINT` to a trusted ResNet18 state_dict with a classification head matching the ordered JSON string list at `CNN_LABELS_PATH`. Checkpoint loading uses `weights_only=True`; no random/ImageNet output is relabeled as Food-101. Preprocessing currently follows `ResNet18_Weights.DEFAULT.transforms()`; training must use compatible evaluation normalization/resize conventions. A five-class classifier head has now been trained from official Food-101 splits; see scripts/train_cnn.py and evaluation/REPORT.zh.md. The backbone remains frozen.
 
-`POST /api/classify-food` takes a raw JPEG/PNG/WebP request body, limited to 5 MB and 16 megapixels. Top-3 softmax scores are not calibrated confidence guarantees. Response requires user category confirmation; the .6 low-confidence threshold is a heuristic. The photo-upload UI, class-to-recipe mapping, and confirmed category retrieval are still pending.
+`POST /api/classify-food` takes a raw JPEG/PNG/WebP request body, limited to 5 MB and 16 megapixels. Top-3 softmax scores are not calibrated confidence guarantees. Response requires user category confirmation; the .6 low-confidence threshold is a heuristic. The photo-upload UI, title/category heuristic mapping and confirmed category retrieval are now implemented.
 
 ## Validation boundary
 
-Automated tests exercise the rule/semantic switch, hard filtering, mocked Ollama success/timeouts, semantic loading failure, generated asset handling with a fake pipeline, and upload limits. They do not validate actual model weights, inference quality, hardware compatibility, or latency. Provider failures are logged server-side without returning internal exception details.
+Automated tests exercise the rule/semantic switch, hard filtering, mocked Ollama success/timeouts, semantic loading failure, generated asset handling with a fake pipeline, and upload limits. Real inference, model training and measured evaluation have additionally been run on this local machine; reports are in evaluation/results. Contract tests alone still do not establish model quality. Provider failures are logged server-side without returning internal exception details.
 
 ## References
 
@@ -62,3 +62,5 @@ Automated tests exercise the rule/semantic switch, hard filtering, mocked Ollama
 Ollama requests use `keep_alive=0s` to release model memory after requests on a 16GB machine. Cached document vectors remain in the API process. Restart the API after changing configuration.
 
 By default `DIFFUSION_UNLOAD_AFTER_GENERATION=1` clears cached pipeline weights after a job to free GPU memory for the LLM; set 0 only when sufficient memory is available. Local inference dependency versions are recorded in `backend/requirements-local-ai.lock.txt` for this Apple silicon/Python 3.13 environment; it is separate from the base CI dependency set.
+
+LLM responses now use an Ollama JSON schema with recipe_id and explanation, enforce source ID equality and a short text limit, and request no amounts/units or rewritten steps. This is output contract validation, not a factual verifier; see before/after provider smoke reports.

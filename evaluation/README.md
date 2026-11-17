@@ -1,12 +1,5 @@
-# Evaluation protocol
+# Evaluation
 
-No model metrics have been measured yet. API tests verify software behavior only.
+See [measured report](REPORT.zh.md) and `results/` for actual metrics, confusion matrix, retrieval baselines and real provider/integration checks.
 
-- Retrieval: fixed queries with human relevance judgments; Recall@K and MRR; compare rule/keyword baseline to encoder retrieval.
-- Ranking: Top-K relevance and hard constraint violation rate.
-- CNN: held-out split, Top-1 accuracy, macro F1, per-class confusion matrix.
-- LLM: source consistency, unsupported ingredient claims, and failure rate.
-- Diffusion: dish consistency, human image quality ratings, latency, and failures.
-- System: end-to-end success and error-state behavior.
-
-Record dataset sizes, splits, model versions, hardware, and actual measurements.
+The five-class CNN uses a frozen pretrained backbone and a trained classifier head. Independent official test membership is preserved. Retrieval results are synthetic known-positive reconstruction metrics, not a human-labeled relevance study. LLM/Diffusion checks measure technical behavior and document observed errors; independent quality ratings remain pending. Do not generalize these limited results to all foods or all users.

@@ -1,33 +1,21 @@
-# Delivery plan
+# Delivery plan — current state
 
-## Completed foundation
-- Project directories and startup instructions.
-- React/FastAPI connection and recipe detail flow.
-- SQLite fixture repository, normalization, hard filters, and rule baseline.
-- Validation and provider-unavailable behavior.
+## Implemented and locally verified
 
-## Implemented AI adapters (model validation pending)
-- Optional cached sentence embeddings and hybrid reranking with rule fallback.
-- Ollama explanation adapter and template fallback.
-- SDXL Turbo Diffusers adapter and AI-labeled generated assets.
-- Custom ResNet18 checkpoint inference and bounded raw-image API.
-- Provider contract and failure tests; no real inference evaluation yet.
+- React/FastAPI/SQLite user flows, validation and provider fallbacks.
+- 5,106 source-backed Food.com records with reproducible preparation/import; six distinct fixtures.
+- Frozen pretrained ResNet18 feature extraction + trained five-class head; official test evaluation and confusion matrix.
+- Photo upload, Top-3 predictions, explicit category confirmation/correction and real recipe lookup.
+- Actual Ollama embedding reranking, Qwen structured explanation and MPS Stable Diffusion generation.
+- Baseline retrieval comparison, provider smoke study and five-category HTTP integration check.
 
-## Next: real data and retrieval
-- Obtain the Food.com dataset through its source and record license/access terms.
-- Implement validated import with source IDs/URLs, parsing, duplicate handling, missing-time flags, and ingredient normalization.
-- Keep project fixtures separate from real records; human-review Chinese examples.
-- Encode recipe text with all-MiniLM-L6-v2; compare retrieval with the rule baseline.
+## Remaining limitations / follow-up research
 
-## Then: AI integrations
-- Choose an LLM provider and configure a server-side key; ground explanations in a selected source record.
-- Verify available GPU or hosted Diffusion provider, license, latency, and budget before choosing a model.
-- Integrate image generation with separate request/job status and AI labeling.
-- Establish Food-101 supported classes, dataset splits, ResNet18 baseline, and category-to-recipe mapping.
+- Human relevance labels and tuning/evaluation on independently held-out user queries. Current semantic blend did not beat keyword baseline on synthetic reconstruction queries.
+- Human validation of category-to-recipe mapping; broader data coverage and cuisine/ingredient normalization.
+- Unknown-food rejection and calibrated probabilities; expansion beyond five supported classes requires separate training/evaluation.
+- Independent LLM factuality and Diffusion image-quality evaluation; outputs can still add unsupported content.
+- Durable image job queue/cancellation, production hosting and dependency vulnerability remediation.
+- Team ownership, original course rubric and explicit TA confirmation of topic counting and AI-use permission; final team report/demo/submission archive.
 
-## Freeze and evaluation
-- Report measured retrieval/classification metrics and model/provider failures.
-- Test no matches, excluded ingredients, provider timeouts, original steps surviving failures, and mobile use.
-- Prepare reproducible environments, data/model setup, and independently verified demo inputs.
-
-The 14-day guide is a planning reference. Its architecture suggestions are not evidence that models, training, data provenance, or evaluations are complete.
+See course-requirements.zh.md for the distinction between working technical modules and confirmed classroom compliance.

@@ -1,0 +1,98 @@
+{
+  "retrieved_date": "2026-11-17",
+  "foodcom": {
+    "source": "https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews",
+    "version": 2,
+    "publisher_declared_license": "CC0: Public Domain (Kaggle metadata); upstream recipe and image rights are not independently verified",
+    "manifest": {
+      "dataset": "irkaal/foodcom-recipes-and-reviews",
+      "recipe_rows": 522517,
+      "review_rows": 1401982,
+      "starter_rows": 5000,
+      "parse_rejections_while_selecting": 0,
+      "starter_selection": "First valid unique records in source order, positive known TotalTime <=120 min and <=15 ingredients; not a random evaluation sample",
+      "recipe_fields": [
+        "RecipeId",
+        "Name",
+        "AuthorId",
+        "AuthorName",
+        "CookTime",
+        "PrepTime",
+        "TotalTime",
+        "DatePublished",
+        "Description",
+        "Images",
+        "RecipeCategory",
+        "Keywords",
+        "RecipeIngredientQuantities",
+        "RecipeIngredientParts",
+        "AggregatedRating",
+        "ReviewCount",
+        "Calories",
+        "FatContent",
+        "SaturatedFatContent",
+        "CholesterolContent",
+        "SodiumContent",
+        "CarbohydrateContent",
+        "FiberContent",
+        "SugarContent",
+        "ProteinContent",
+        "RecipeServings",
+        "RecipeYield",
+        "RecipeInstructions"
+      ],
+      "review_fields": [
+        "ReviewId",
+        "RecipeId",
+        "AuthorId",
+        "AuthorName",
+        "Rating",
+        "Review",
+        "DateSubmitted",
+        "DateModified"
+      ],
+      "archive_sha256": "fa7910c9591997641448147809faa21b4bba539c01225fda2ab6b315b5f7527d"
+    },
+    "local_raw": "data/raw/foodcom/",
+    "local_app_subset": "data/processed/foodcom_starter.jsonl",
+    "app_imported_real_records": 5106,
+    "photo_extension_records": 106,
+    "photo_extension_selection": {
+      "selection": "Pinned source IDs in data_metadata/photo_extension_ids.json preserve the original category-coverage sample (0<minutes<=120, <=25 ingredients). Current mapping may exclude some pinned records at recommendation time.",
+      "eligible_extension_counts_current_mapping": {
+        "fried_rice": 19,
+        "omelette": 25,
+        "pizza": 4,
+        "ramen": 28,
+        "dumplings": 19
+      },
+      "new_records": 106,
+      "limitations": "Category mapping is heuristic and not a paired Food101/Food.com annotation."
+    }
+  },
+  "food101": {
+    "source": "https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/",
+    "source_notice": "Images belong to Foodspotting contributors; use beyond scientific fair use requires negotiation with rights holders. Public download is not a general redistribution permission.",
+    "manifest": {
+      "source": "https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/",
+      "classes": [
+        "dumplings",
+        "fried_rice",
+        "omelette",
+        "pizza",
+        "ramen"
+      ],
+      "counts": {
+        "train": 3000,
+        "validation": 750,
+        "test": 1250
+      },
+      "seed": 42,
+      "split_policy": "600 train / 150 validation from official 750 train per class; all 250 official test per class held out",
+      "extracted_files": 5006,
+      "archive_sha256": "d97d15e438b7f4498f96086a4f7e2fa42a32f2712e87d3295441b2b6314053a4"
+    },
+    "local_archive": "data/raw/food-101.tar.gz",
+    "local_supported_class_images": "data/raw/food101/food-101/images/"
+  }
+}

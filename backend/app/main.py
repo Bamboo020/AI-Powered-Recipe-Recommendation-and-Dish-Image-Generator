@@ -8,7 +8,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from .ai.services import AIUnavailable, configured_services, semantic_scores, explain_recipe, generate_recipe_image, classify_image
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Literal
+from .dishes import DISH_PATTERNS, matches_dish
 
 from dotenv import load_dotenv
 
@@ -18,7 +20,7 @@ DB_PATH = Path(os.getenv("RECIPE_DB_PATH", str(ROOT / "recipes.sqlite3")))
 ALIASES = {
     "eggs": "egg", "鸡蛋": "egg", "番茄": "tomato", "西红柿": "tomato",
     "tomatoes": "tomato", "熟米饭": "cooked_rice", "米饭": "cooked_rice",
-    "cooked rice": "cooked_rice", "rice": "raw_rice", "生米": "raw_rice",
+    "cooked rice": "cooked_rice", "raw rice": "raw_rice", "uncooked rice": "raw_rice", "rice": "raw_rice", "生米": "raw_rice",
     "大米": "raw_rice", "鸡肉": "chicken", "土豆": "potato", "potatoes": "potato",
     "洋葱": "onion", "大蒜": "garlic", "面条": "noodles", "豆腐": "tofu",
     "酱油": "soy_sauce", "soy sauce": "soy_sauce", "葱": "scallion",
@@ -48,19 +50,28 @@ async def lifespan(app):
     yield
 
 
-app = FastAPI(title="Pantry Studio Recipe API", version="0.2.0", lifespan=lifespan)
+app = FastAPI(title="Pantry Studio Recipe API", version="0.3.0", lifespan=lifespan)
 IMAGE_DIR = ROOT / "generated"
 app.mount("/generated", StaticFiles(directory=str(IMAGE_DIR), check_dir=False), name="generated")
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 
 
 class RecipeRequest(BaseModel):
-    ingredients: list[str] = Field(min_length=1, max_length=50)
+    ingredients: list[str] = Field(default_factory=list, max_length=50)
     max_cooking_time: int = Field(default=30, ge=1, le=1440)
     cuisine: str = Field(default="any", max_length=80)
     servings: int = Field(default=1, ge=1, le=20)
     excluded_ingredients: list[str] = Field(default_factory=list, max_length=50)
     top_k: int = Field(default=3, ge=1, le=10)
+
+    dish_category: Literal['fried_rice', 'omelette', 'pizza', 'ramen', 'dumplings'] | None = None
+    dataset: Literal['all', 'real', 'demo'] = 'all'
+
+    @model_validator(mode='after')
+    def require_query(self):
+        if not self.ingredients and not self.dish_category:
+            raise ValueError('Provide ingredients or a confirmed dish category')
+        return self
 
     @field_validator("ingredients", "excluded_ingredients")
     @classmethod
@@ -83,7 +94,9 @@ def find_recipe(recipe_id):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "recipe_count": len(read_recipes()), "dataset": "illustrative_demo", "services": configured_services()}
+    recipes = read_recipes()
+    real = sum(r['recipe_id'].startswith('foodcom-') for r in recipes)
+    return {"status": "ok", "recipe_count": len(recipes), "real_recipe_count": real, "demo_recipe_count": len(recipes)-real, "dataset": "foodcom_and_labeled_fixtures" if real else "illustrative_demo", "services": configured_services(), "supported_dish_categories": list(DISH_PATTERNS)}
 
 
 @app.post("/api/recommend")
@@ -93,14 +106,23 @@ def recommend(request: RecipeRequest):
     results = []
     candidates = []
     for recipe in read_recipes():
+        is_real = recipe['recipe_id'].startswith('foodcom-')
+        if request.dataset == 'real' and not is_real or request.dataset == 'demo' and is_real:
+            continue
+        if request.dish_category and not matches_dish(recipe, request.dish_category):
+            continue
         needed = {normalize(item["name"]) for item in recipe["ingredient_items"]}
         if needed & excluded or recipe["total_minutes"] is None or recipe["total_minutes"] > request.max_cooking_time:
             continue
         matched = needed & available
-        if not matched:
+        if not matched and not request.dish_category:
             continue
         candidates.append((recipe, needed, matched))
-    similarities = semantic_scores(" ".join(request.ingredients) + " " + normalize(request.cuisine), [r for r, _, _ in candidates])
+    eligible_count = len(candidates)
+    # Bound encoder work on real datasets; shortlist by the existing deterministic baseline.
+    candidates.sort(key=lambda entry: (- (.6 * len(entry[2])/len(entry[1]) + .2 * (1-entry[0]['total_minutes']/request.max_cooking_time) + .2 * float(normalize(request.cuisine) in ['any', *entry[0]['cuisine_tags']])), entry[0]['recipe_id']))
+    candidates = candidates[:128]
+    similarities = semantic_scores(" ".join(request.ingredients) + " " + (request.dish_category or '') + " " + normalize(request.cuisine), [r for r, _, _ in candidates])
     for index, (recipe, needed, matched) in enumerate(candidates):
         coverage = len(matched) / len(needed)
         time_fit = 1 - recipe["total_minutes"] / request.max_cooking_time
@@ -112,7 +134,7 @@ def recommend(request: RecipeRequest):
             score = .4 * coverage + .25 * time_fit + .2 * cuisine_fit + .15 * similarities[index]
         results.append({**recipe, "available_ingredients": sorted(matched), "missing_ingredients": sorted(needed - available), "match_factors": factors, "final_score": round(score, 4), "requested_servings": request.servings, "quantity_note": "Quantities and steps retain the original recipe yield; adjust portions manually.", "llm_explanation": None, "generated_image": {"status": "not_requested" if os.getenv("DIFFUSION_MODEL") else "not_configured", "url": None, "is_ai_generated": False}})
     results.sort(key=lambda item: (-item["final_score"], item["recipe_id"]))
-    return {"recommendations": results[:request.top_k], "total_candidates": len(results), "ranking_method": "hybrid_semantic_v1" if similarities is not None else "ingredient_rules_v1", "semantic_status": "used" if similarities is not None else "unavailable_or_disabled", "dataset_notice": "Illustrative project fixtures, not imported Food.com records. Not validated dietary or allergy advice."}
+    return {"recommendations": results[:request.top_k], "total_candidates": eligible_count, "reranked_candidates": len(results), "confirmed_dish_category": request.dish_category, "category_mapping": "title_keyword_heuristic" if request.dish_category else None, "ranking_method": "hybrid_semantic_v1" if similarities is not None else "ingredient_rules_v1", "semantic_status": "used" if similarities is not None else "unavailable_or_disabled", "dataset_notice": "Food.com records and/or explicitly labeled fixtures, according to dataset selection. Quantities retain source text; aliases and exclusions are limited, not allergy safety guarantees."}
 
 
 @app.post("/api/explain")

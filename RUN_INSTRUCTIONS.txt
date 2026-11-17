@@ -1,8 +1,13 @@
-Pantry Studio v0.1
-See README.md for full setup.
-Python 3.11+, Node 20.19+ or 22.12+.
-Backend: cd backend; create/activate a virtualenv; pip install -r requirements.txt; python -m uvicorn app.main:app --reload
-Frontend (second terminal): cd frontend; npm ci; npm run dev
-Browser: http://localhost:5173
-API documentation: http://127.0.0.1:8000/docs
-No API keys are required for this fixture-based version. AI providers are not yet configured.
+Pantry Studio v0.3 — local research prototype
+Python 3.11+ (tested 3.13 on Apple M4/16GB), Node 20.19+ or 22.12+.
+Local setup is complete on this computer. Root .env loads automatically.
+1. Run ollama serve if not already running.
+2. From repository root: sh scripts/start-backend.sh
+3. In a second terminal: cd frontend; npm ci; npm run dev
+Browser: http://127.0.0.1:5173
+API docs: http://127.0.0.1:8000/docs
+App has 5106 real Food.com recipes and 6 separately labeled fixtures.
+CNN supports only dumplings/fried_rice/omelette/pizza/ramen.
+Upload a supported photo, inspect Top-3, confirm/correct the class, then retrieve recipes.
+No credentials are required for local Ollama/MPS inference. Models/data are local and ignored by Git.
+For reproduction, data source terms, model training, evaluation and limits, see README.md and evaluation/REPORT.zh.md.

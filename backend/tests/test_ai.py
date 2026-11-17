@@ -23,7 +23,7 @@ def test_llm_success_and_timeout(monkeypatch):
     def success(url, **kwargs):
         assert kwargs['json']['stream'] is False
         assert 'demo-001' in kwargs['json']['messages'][1]['content']
-        return httpx.Response(200,json={'message':{'content':'{"recipe_id":"demo-001","explanation":"基于原食谱的说明"}'}},request=httpx.Request('POST',url))
+        return httpx.Response(200,json={'message':{'content':'{"recipe_id":"demo-001","explanation":"An explanation based on the original recipe"}'}},request=httpx.Request('POST',url))
     monkeypatch.setattr(services.httpx,'post',success)
     with TestClient(main.app) as client:
         data = client.post('/api/explain',json={'recipe_id':'demo-001'}).json()
@@ -78,3 +78,16 @@ def test_ollama_embeddings_are_used_and_cached(monkeypatch):
     assert calls[0][0].startswith('search_document: ')
     assert calls[1][0].startswith('search_query: ')
     services.ollama_document_embeddings.cache_clear()
+
+
+def test_non_english_llm_output_falls_back(monkeypatch):
+    monkeypatch.setenv('OLLAMA_MODEL', 'test-model')
+    def unexpected_language(url, **kwargs):
+        assert 'English paragraph' in kwargs['json']['messages'][0]['content']
+        return httpx.Response(200, json={'message': {'content': '{"recipe_id":"demo-001","explanation":"这是中文说明"}'}}, request=httpx.Request('POST', url))
+    monkeypatch.setattr(services.httpx, 'post', unexpected_language)
+    with TestClient(main.app) as client:
+        data = client.post('/api/explain', json={'recipe_id': 'demo-001'}).json()
+    assert data['status'] == 'fallback'
+    assert data['is_llm_generated'] is False
+    assert 'LLM unavailable' in data['text']

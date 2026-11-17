@@ -46,7 +46,7 @@ async def lifespan(app):
     with sqlite3.connect(DB_PATH) as connection:
         connection.execute("CREATE TABLE IF NOT EXISTS recipes (recipe_id TEXT PRIMARY KEY, payload TEXT NOT NULL)")
         for recipe in json.loads((ROOT / "data_metadata/demo_recipes.json").read_text()):
-            connection.execute("INSERT OR IGNORE INTO recipes VALUES (?, ?)", (recipe["recipe_id"], json.dumps(recipe, ensure_ascii=False)))
+            connection.execute("INSERT INTO recipes VALUES (?, ?) ON CONFLICT(recipe_id) DO UPDATE SET payload=excluded.payload", (recipe["recipe_id"], json.dumps(recipe, ensure_ascii=False)))
     yield
 
 

@@ -4,10 +4,10 @@ A runnable CSYE 7380 research prototype: enter ingredients or upload a supported
 
 ## Implemented
 
-- React/Vite Chinese UI, FastAPI validation/orchestration, SQLite repository.
+- React/Vite English UI, FastAPI validation/orchestration, SQLite repository.
 - 5,106 imported real Food.com recipes plus six separately labeled illustrative fixtures. Default UI mode searches real data.
 - Time/exclusion filters, ingredient normalization, optional real Ollama/SentenceTransformer embedding reranking, and explainable scores. Encoder work is limited to a 128-candidate rule shortlist.
-- Qwen2.5 7B via Ollama, structured short explanations with source ID checks and template fallback.
+- Qwen2.5 7B via Ollama, structured short English explanations with source ID checks and template fallback.
 - Local Stable Diffusion 1.5 on Apple MPS, original recipe preserved and generated PNG clearly labeled.
 - Five-class ResNet18 CNN: ImageNet backbone frozen, classification head trained on real Food-101. Upload → Top-3 → user confirmation/correction → recipe lookup is connected in the UI.
 - Reproducible data scripts, model training, held-out evaluation, baseline comparison, provider smoke tests, and CI.

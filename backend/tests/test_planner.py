@@ -17,8 +17,7 @@ def test_goals_change_ranking_and_missing_values_stay_unknown():
     result=plan(request(goals=['strength']), recipes, str.lower)
     assert result['recipes'][0]['title']=='b'
     assert 'nutrition' not in result['recipes'][0]
-    assert result['takeout']['restaurants']==[]
-    assert result['takeout']['status']=='live_provider_not_configured'
+    assert 'takeout' not in result
 
 
 def test_window_and_exclusions_are_hard_constraints():
@@ -44,11 +43,10 @@ def test_invalid_or_conflicting_preferences():
         request(goals=['crash_diet'])
 
 
-def test_takeout_link_encodes_input_and_does_not_invent_reviews():
-    result=plan(request(location='Cambridge & Boston',willing_to_cook=False),[],str.lower)
-    assert 'Cambridge+%26+Boston' in result['takeout']['search_url']
-    assert result['takeout']['restaurants']==[]
-    assert 'Takeout' in result['decision']
+def test_ready_meal_option_does_not_invent_businesses():
+    result=plan(request(willing_to_cook=False),[],str.lower)
+    assert 'takeout' not in result
+    assert 'ready-to-eat' in result['decision']
 
 
 def test_desserts_and_substring_matches_do_not_become_balanced_meals():

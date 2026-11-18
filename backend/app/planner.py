@@ -2,7 +2,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
 import re
-from urllib.parse import urlencode
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -46,7 +45,6 @@ class PlanRequest(BaseModel):
     meal_at: datetime
     hemisphere: str = Field(default='north', pattern='^(north|south|tropical)$')
     willing_to_cook: bool = True
-    location: str = Field(default='', max_length=200)
 
     @model_validator(mode='after')
     def valid_window(self):
@@ -97,7 +95,7 @@ def plan(request, recipes, normalize):
                    'plant_variety': min(plants/3, 1), 'save_time': 1-duration/window,
                    'budget': 1/(1+len(needed-available)),
                    'reduce_waste': len(matched)/max(1,len(available))}
-        selected = {g.value: round(factors[g.value], 3) for g in set(request.goals)}
+        selected = {g.value: round(factors[g.value], 3) for g in dict.fromkeys(request.goals)}
         score = .6*sum(selected.values())/len(selected) + .4*len(matched)/len(needed)
         ranked.append({**recipe, 'goal_factors': selected, 'planning_score': round(score, 3),
                        'matched_ingredients': sorted(matched), 'missing_ingredients': sorted(needed-available),
@@ -109,15 +107,12 @@ def plan(request, recipes, normalize):
                      'Spring': 'Consider locally available leafy greens.',
                      'Summer': 'Consider a cool meal and locally available vegetables.',
                      'Autumn': 'Consider locally available squash or root vegetables.'}.get(season, 'Use local seasonal information for produce choices.')
-    takeout = {'status': 'live_provider_not_configured', 'restaurants': [],
-               'message': 'Live opening hours, reviews, delivery eligibility, prices and menu calories are unavailable. No nearby businesses have been verified.',
-               'search_url': 'https://www.google.com/maps/search/?'+urlencode({'api': '1', 'query': 'takeout restaurants '+request.location}) if request.location.strip() else None}
     decision = ('Cooking fits your free window. Compare missing ingredients and source quantities before deciding.' if ranked and request.willing_to_cook else
-                'Takeout or a ready-to-eat meal can fit a busy day. Compare a protein food, vegetables, portions, price and the actual delivery estimate.')
+                'A ready-to-eat meal can fit a busy day. Compare protein foods, vegetables and portions. Explore Boston activities below to make time for something you enjoy.')
     return {'goals': [{'id': g.value, 'label': GOALS[g.value][0], 'guidance': GOALS[g.value][1]} for g in dict.fromkeys(request.goals)],
             'season': season, 'seasonal_note': seasonal_note,
             'season_basis': 'Calendar season by selected hemisphere; a planning prompt, not a local harvest or weather forecast. Season does not change recipe scores.',
-            'free_minutes': round(window), 'recipes': ranked[:3], 'decision': decision, 'takeout': takeout,
+            'free_minutes': round(window), 'recipes': ranked[:3], 'decision': decision,
             'activity': {'suggestion': 'If comfortable, choose a short walk or movement break. For strength goals, plan resistance training on separate days; start at a level that suits your ability.',
                          'weekly_context': 'General adult guidance: at least 150 minutes of moderate activity per week and muscle strengthening on 2 days. This meal plan does not calculate exercise calorie burn.',
                          'source_url': 'https://www.cdc.gov/physical-activity-basics/guidelines/adults.html'},

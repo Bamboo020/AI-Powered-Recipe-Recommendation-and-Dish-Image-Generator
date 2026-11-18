@@ -103,10 +103,26 @@ The current npm audit reports four high-severity findings in the Vite developmen
 
 ### Lifestyle meal planner
 
-The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions, cooking preference and optional neighborhood.
+The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions, cooking preference and cooking preference.
 
 Plans use source total cooking time and transparent ingredient heuristics (60% selected-goal fit, 40% ingredient coverage). Obvious desserts/drinks are excluded by title/category rules. Budget uses missing ingredient count, not real prices. Calendar seasons provide general prompts, not local harvest/weather claims. This is a single-meal plan; it does not import a calendar, prescribe a calorie deficit or validate an entire day's nutritional adequacy.
 
 Run `backend/.venv/bin/python scripts/backfill_nutrition.py` after the existing data preparation/import to refresh original Calories, ProteinContent, CarbohydrateContent, FatContent and FiberContent for the 5,106 local records. Preparation scripts also preserve these fields for future imports. **Nutrition serving basis remains unverified**, so the interface labels source-reported calories and does not rescale them or use them as personal targets.
 
-Nearby takeout currently offers a user-opened Google Maps search link only. Live business reviews, opening hours, menu nutrition and delivery estimates are **not integrated**; the API explicitly returns `live_provider_not_configured` and no restaurants. General adult activity context links to [CDC guidance](https://www.cdc.gov/physical-activity-basics/guidelines/adults.html); no exercise calorie burn or medical plan is calculated.
+The nearby-business prototype has been replaced by the Boston events map described below; restaurant search and delivery recommendations are not provided. General adult activity context links to [CDC guidance](https://www.cdc.gov/physical-activity-basics/guidelines/adults.html); no exercise calorie burn or medical plan is calculated.
+
+
+### Boston activities map — no API key
+
+`GET /api/events/boston` connects to the [official City of Boston RSS](https://www.boston.gov/rss/events), linked from the [city events calendar](https://www.boston.gov/events). The English interface displays actual listings on an interactive Leaflet/OpenStreetMap map, with date/category/search filters, online/cancelled toggles, linked cards and organizer links. No map or events API key is needed.
+
+- The visible page checks for updates every 5 minutes. The server shares a 5-minute memory snapshot; manual refresh can fetch again after a 60-second cooldown. `fetched_at`, `updated/cached/stale`, source coverage and failure messages are visible. This is periodically refreshed data, not push notifications or guaranteed immediate cancellation/capacity information.
+- RSS occurrences are deduplicated by official URL plus event start. Visible event time is parsed in `America/New_York` because the current RSS's `datetime` values can incorrectly label a local clock with `Z`. Ambiguous/nonexistent daylight-saving times are skipped; missing end times stay unknown.
+- Only numbered public venue street addresses are sent to the [U.S. Census Geocoder](https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html). Unambiguous matches inside greater Boston become **approximate street-range** pins. Online, ambiguous and missing addresses remain unplaced. Up to 8 unique addresses per refresh are checked with at most 3 concurrent calls; successful coordinates cache for a day, failures for 5 minutes.
+- No personal location, health goal or pantry contents are sent to the feed, geocoder or map provider. The browser requests map tiles directly from OpenStreetMap, which receives ordinary network/referrer metadata. Attribution remains visible. There is no background map prefetch or offline tile download; larger deployments should provision an appropriate tile service.
+- The RSS is a limited city-published subset, mostly civic/community listings; the filter does not search all Boston events. Categories are transparent title/department keyword suggestions. Prices, tickets, attendance and travel times are not inferred.
+- Feed failure retains a clearly marked last successful memory snapshot for up to 24 hours; without one the API returns 503. New deployment dependencies are in `backend/requirements.txt` and `frontend/package-lock.json`.
+
+General adult movement context remains linked to CDC guidance; event attendance is not converted into a calorie burn estimate or a prescribed workout.
+
+Live integration check (with the API running): `backend/.venv/bin/python scripts/smoke_boston_events.py`. The recorded real result is in `evaluation/results/boston_events_smoke.json`; it is an evaluation snapshot, not the application data source.

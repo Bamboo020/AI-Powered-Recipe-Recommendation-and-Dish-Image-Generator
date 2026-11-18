@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Literal
 from .dishes import DISH_PATTERNS, matches_dish
 from .planner import GOALS, PlanRequest, plan
+from .events import EventsUnavailable, get_events
 
 from dotenv import load_dotenv
 
@@ -141,6 +142,15 @@ def recommend(request: RecipeRequest):
 @app.get('/api/goals')
 def goals():
     return [{'id': key, 'label': value[0], 'guidance': value[1]} for key, value in GOALS.items()]
+
+
+@app.get('/api/events/boston')
+def boston_events(refresh: bool = False):
+    from fastapi.responses import JSONResponse
+    try:
+        return JSONResponse(get_events(force_refresh=refresh), headers={'Cache-Control': 'no-store'})
+    except EventsUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @app.post('/api/plan')

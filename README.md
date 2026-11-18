@@ -103,7 +103,7 @@ The current npm audit reports four high-severity findings in the Vite developmen
 
 ### Lifestyle meal planner
 
-The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions, cooking preference and cooking preference.
+The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions and cooking preference.
 
 Plans use source total cooking time and transparent ingredient heuristics (60% selected-goal fit, 40% ingredient coverage). Obvious desserts/drinks are excluded by title/category rules. Budget uses missing ingredient count, not real prices. Calendar seasons provide general prompts, not local harvest/weather claims. This is a single-meal plan; it does not import a calendar, prescribe a calorie deficit or validate an entire day's nutritional adequacy.
 
@@ -114,7 +114,7 @@ The nearby-business prototype has been replaced by the Boston events map describ
 
 ### Boston activities map — no API key
 
-`GET /api/events/boston` connects to the [official City of Boston RSS](https://www.boston.gov/rss/events), linked from the [city events calendar](https://www.boston.gov/events). The English interface displays actual listings on an interactive Leaflet/OpenStreetMap map, with date/category/search filters, online/cancelled toggles, linked cards and organizer links. No map or events API key is needed.
+`GET /api/events/boston` connects to the [official City of Boston RSS](https://www.boston.gov/rss/events), linked from the [city events calendar](https://www.boston.gov/events). The backend retains the general city-event feed; the current English map interface uses the free-food resource endpoint described below, with date/category/search filters and linked provider cards. No map or events API key is needed.
 
 - The visible page checks for updates every 5 minutes. The server shares a 5-minute memory snapshot; manual refresh can fetch again after a 60-second cooldown. `fetched_at`, `updated/cached/stale`, source coverage and failure messages are visible. This is periodically refreshed data, not push notifications or guaranteed immediate cancellation/capacity information.
 - RSS occurrences are deduplicated by official URL plus event start. Visible event time is parsed in `America/New_York` because the current RSS's `datetime` values can incorrectly label a local clock with `Z`. Ambiguous/nonexistent daylight-saving times are skipped; missing end times stay unknown.
@@ -126,3 +126,23 @@ The nearby-business prototype has been replaced by the Boston events map describ
 General adult movement context remains linked to CDC guidance; event attendance is not converted into a calorie burn estimate or a prescribed workout.
 
 Live integration check (with the API running): `backend/.venv/bin/python scripts/smoke_boston_events.py`. The recorded real result is in `evaluation/results/boston_events_smoke.json`; it is an evaluation snapshot, not the application data source.
+
+### Free food options, not merely free admission
+
+The activity interface now focuses on **free food** through `GET /api/food-resources/boston`. It separates prepared meals, groceries to cook, community fridges and one-off events explicitly mentioning free food. The reviewed starter registry covers four services at two addresses: Allston Brighton Food Pantry's Wednesday hot meal/groceries and community fridge, and Friday Night Supper's dinner service. Each record keeps its provider link, eligibility, published schedule, review date, source-check status and approximate Census map location.
+
+Regular programs are manually reviewed summaries, with five-minute checks that the source still contains the reviewed details. They are **not** a complete Boston resource directory or a real-time inventory/opening-hours API. Changed or unreachable sources display `needs_recheck`. Prices are not inferred from free admission, donation drives or generic food mentions. The city RSS contributes only explicit free-food evidence; no matching event is an honest empty result. Fridge stock, exact menus, calories, dietary suitability, holiday changes and immediate meal availability remain unknown. Source pages: [Allston Brighton services](https://abfoodpantry.com/services/) and [Friday Night Supper guest information](https://www.fridaynightsupper.org/be-our-guest); its address is documented on the [provider contact page](https://www.fridaynightsupper.org/contact).
+
+### Multiple ingredient photos → confirmation → recipe suggestions
+
+The new custom drop/paste/choose interface accepts **1–3 JPG/PNG/WebP photos**, each under 5 MB and 16 megapixels. `POST /api/identify-ingredients` accepts base64 image strings in `images` (bounded 21 MB JSON request). It strips metadata, creates bounded 1024-pixel inference copies and sends each photo separately to local Ollama. It does not persist ordinary user uploads or send them to the event, geocoding or map providers.
+
+```sh
+ollama pull llava:7b
+```
+
+Set `OLLAMA_VISION_MODEL=llava:7b` in the ignored root `.env` and restart the backend. LLaVA is an additional **pretrained vision-language model**, not the trained five-class CNN and not a newly trained ingredient detector. Its short visual description is conservatively mapped to a limited English ingredient vocabulary. Every suggestion is marked uncertain, starts unchecked and keeps its photo index. Unknown rice state must be corrected before use. Users select/correct ingredients and explicitly confirm before replacing their pantry and requesting source-backed recipes. Recognized prepared dishes display a warning that visible components are not a complete pantry list. Failures leave manual entry available.
+
+The existing ResNet18 dish-photo interface remains separate, with its five supported classes and original evaluation. Neither interface guarantees arbitrary photo accuracy, portions, freshness, food safety or hidden allergen detection. No calories are estimated from photos. Photo-confirmed searches set `meal_only=true`, which excludes obvious desserts/drinks/standalone sauce categories and records with fewer than two listed ingredients. This is a discovery heuristic, not proof the source ingredient list is complete.
+
+Real integration check: `backend/.venv/bin/python scripts/smoke_food_and_photos.py` with the app running and the two attributed local development photos prepared as documented in `data_metadata/ingredient_photo_sources.json`. Results in `evaluation/results/food_and_photos_smoke.json` preserve observed omissions and manual corrections. These development samples are **not** a held-out ingredient-recognition accuracy benchmark. The downloaded model and image binaries remain excluded from Git.

@@ -46,3 +46,13 @@ def test_unavailable_services_are_honest():
         assert client.post("/api/generate-image", json=selected).status_code == 503
         assert client.post("/api/classify-food").status_code == 503
         assert client.post("/api/explain", json={"recipe_id": "missing"}).status_code == 404
+
+
+def test_photo_meal_scope_excludes_desserts_and_single_ingredient_records(monkeypatch):
+    from app import main
+    def record(key,title,ingredients,category='Lunch'):
+        return {'recipe_id':key,'title':title,'source_category':category,'source':'test','total_minutes':10,'servings':1,'ingredient_items':[{'name':i} for i in ingredients],'steps':['Review source.'],'cuisine_tags':[]}
+    monkeypatch.setattr(main,'read_recipes',lambda:[record('a','Lemon Cookies',['egg']),record('b','Scrambled eggs with tomato',['egg','tomato']),record('c','Quick egg',['egg']),record('d','Tomato Sauce',['tomato','salt'],'Sauces')])
+    with TestClient(app) as client:
+        data=client.post('/api/recommend',json={'ingredients':['egg','tomato'],'meal_only':True}).json()
+        assert [r['recipe_id'] for r in data['recommendations']]==['b']

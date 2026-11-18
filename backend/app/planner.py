@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 import re
 from pydantic import BaseModel, Field, model_validator
+from .dishes import is_meal_candidate
 
 
 class Goal(str, Enum):
@@ -74,8 +75,7 @@ def plan(request, recipes, normalize):
         if not recipe['recipe_id'].startswith('foodcom-'):
             continue
         # This endpoint plans meals, not desserts or drinks that happen to contain eggs/oats.
-        category_text = (recipe.get('source_category', '')+' '+recipe.get('title', '')).lower()
-        if re.search(r'\b(cookie|cookies|cake|cakes|dessert|desserts|candy|candies|frosting|cocktail|cocktails|smoothie|beverage|beverages|chocolate|brownie|brownies)\b', category_text):
+        if not is_meal_candidate(recipe):
             continue
         duration = recipe.get('total_minutes')
         needed = {normalize(i['name']) for i in recipe['ingredient_items']}

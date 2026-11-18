@@ -1,5 +1,16 @@
 """Heuristic category-to-recipe title mapping; no paired Food101/Food.com IDs."""
 import re
+
+
+def is_meal_candidate(recipe):
+    """Meal-only discovery heuristic; not an assessment of nutrition or source completeness."""
+    text = (recipe.get('title', '')+' '+recipe.get('source_category', '')).lower()
+    if re.search(r'\b(cookies?|cakes?|desserts?|candy|candies|frosting|cocktails?|smoothies?|beverages?|chocolate|brownies?|icing|lemonade|milkshakes?)\b', text):
+        return False
+    category = recipe.get('source_category', '').lower()
+    return not re.search(r'\b(sauces?|dressings?|condiments?|marinades?|seasonings?|beverages?)\b', category)
+
+
 DISH_PATTERNS={
     'fried_rice':r'\bfried rice\b|炒饭',
     'omelette':r'\bomelette?s?\b|\bomelets?\b',

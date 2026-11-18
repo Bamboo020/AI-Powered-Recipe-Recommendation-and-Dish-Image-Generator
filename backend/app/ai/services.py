@@ -20,7 +20,7 @@ class AIUnavailable(RuntimeError):
 
 def configured_services():
     return {name: "configured_unverified" if (os.getenv(key) or (name == "semantic_encoder" and os.getenv("OLLAMA_EMBED_MODEL"))) else "not_configured"
-            for name, key in {"semantic_encoder": "EMBEDDING_MODEL", "llm": "OLLAMA_MODEL", "diffusion": "DIFFUSION_MODEL", "cnn": "CNN_CHECKPOINT"}.items()}
+            for name, key in {"semantic_encoder": "EMBEDDING_MODEL", "llm": "OLLAMA_MODEL", "diffusion": "DIFFUSION_MODEL", "cnn": "CNN_CHECKPOINT", "ingredient_vision": "OLLAMA_VISION_MODEL"}.items()}
 
 
 @lru_cache(maxsize=1)

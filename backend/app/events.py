@@ -111,7 +111,9 @@ def parse_feed(content):
         postal = address_node.select_one('.postal-code') if address_node else None
         query = ', '.join([street, locality.get_text(strip=True) if locality else 'Boston',
                            state.get_text(strip=True) if state else 'MA', postal.get_text(strip=True) if postal else '']) if street else None
-        events.append({'id': hashlib.sha256('|'.join(key).encode()).hexdigest()[:20],
+        from .food_resources import free_food_evidence
+        evidence = free_food_evidence(title+' '+soup.get_text(' ', strip=True).split('Contact Department:')[0])
+        events.append({'free_food': evidence, 'id': hashlib.sha256('|'.join(key).encode()).hexdigest()[:20],
                        'title': title, 'source_url': url, 'source': 'City of Boston',
                        'start_at': start.isoformat(), 'end_at': end.isoformat() if end and end > start else None,
                        'time_basis': 'Visible event clock interpreted in America/New_York; feed UTC attributes may disagree.',

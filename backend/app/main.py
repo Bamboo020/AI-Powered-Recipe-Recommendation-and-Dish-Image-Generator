@@ -10,7 +10,7 @@ from .ai.services import AIUnavailable, configured_services, semantic_scores, ex
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Literal
-from .dishes import DISH_PATTERNS, matches_dish
+from .dishes import DISH_PATTERNS, matches_dish, is_meal_candidate
 from .planner import GOALS, PlanRequest, plan
 from .events import EventsUnavailable, get_events
 
@@ -68,6 +68,7 @@ class RecipeRequest(BaseModel):
 
     dish_category: Literal['fried_rice', 'omelette', 'pizza', 'ramen', 'dumplings'] | None = None
     dataset: Literal['all', 'real', 'demo'] = 'all'
+    meal_only: bool = False
 
     @model_validator(mode='after')
     def require_query(self):
@@ -113,7 +114,11 @@ def recommend(request: RecipeRequest):
             continue
         if request.dish_category and not matches_dish(recipe, request.dish_category):
             continue
+        if request.meal_only and not is_meal_candidate(recipe):
+            continue
         needed = {normalize(item["name"]) for item in recipe["ingredient_items"]}
+        if request.meal_only and len(needed) < 2:
+            continue
         if needed & excluded or recipe["total_minutes"] is None or recipe["total_minutes"] > request.max_cooking_time:
             continue
         matched = needed & available
@@ -192,3 +197,29 @@ async def classify_food(request: Request):
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except AIUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post('/api/identify-ingredients')
+async def ingredient_photos(request: Request):
+    from .ai.ingredients import PhotoBatch, identify_ingredients
+    from pydantic import ValidationError
+    from starlette.concurrency import run_in_threadpool
+    content = bytearray()
+    async for chunk in request.stream():
+        content.extend(chunk)
+        if len(content) > 21*1024*1024:
+            raise HTTPException(status_code=413, detail='Upload up to 3 photos, each under 5 MB')
+    try:
+        batch = PhotoBatch.model_validate_json(bytes(content))
+        return await run_in_threadpool(identify_ingredients, batch.images)
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(status_code=422, detail='Use 1 to 3 valid JPG, PNG or WebP images, each under 5 MB and 16 megapixels') from exc
+    except AIUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get('/api/food-resources/boston')
+def boston_food_resources(refresh: bool = False):
+    from .food_resources import get_food_resources
+    from fastapi.responses import JSONResponse
+    return JSONResponse(get_food_resources(refresh), headers={'Cache-Control':'no-store'})

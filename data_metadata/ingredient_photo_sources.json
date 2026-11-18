@@ -1,0 +1,25 @@
+{
+  "purpose": "Two development smoke examples for local vision, not training data or an accuracy benchmark. Image binaries are ignored and not distributed in the repository.",
+  "samples": [
+    {
+      "local_name": "output/ingredient-smoke/tomatoes.jpg",
+      "title": "Tomato je.jpg",
+      "author": "Softeis",
+      "source": "https://commons.wikimedia.org/wiki/File:Tomato_je.jpg",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "processing": "Original downloaded for local testing. Inference creates a JPEG thumbnail up to 1024 px and removes metadata. UI screenshots show a scaled preview."
+    },
+    {
+      "local_name": "output/ingredient-smoke/vegetables-eggs.jpg",
+      "title": "Vegetables and eggs.JPG",
+      "author": "Biso",
+      "source": "https://commons.wikimedia.org/wiki/File:Vegetables_and_eggs.JPG",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/23/Vegetables_and_eggs.JPG",
+      "license": "CC BY 3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "processing": "Original downloaded for local testing. Inference creates a JPEG thumbnail up to 1024 px and removes metadata. UI screenshots show a scaled preview."
+    }
+  ]
+}

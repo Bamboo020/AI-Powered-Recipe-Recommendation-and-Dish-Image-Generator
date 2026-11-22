@@ -4,6 +4,7 @@ from enum import Enum
 import re
 from pydantic import BaseModel, Field, model_validator
 from .dishes import is_meal_candidate
+from .ingredient_rules import contains_excluded
 
 
 class Goal(str, Enum):
@@ -71,7 +72,8 @@ def plan(request, recipes, normalize):
     excluded = {normalize(x) for x in request.excluded_ingredients if x.strip()}
     window = (request.meal_at-request.window_start).total_seconds()/60
     ranked = []
-    for recipe in recipes:
+    candidate_recipes = recipes if request.willing_to_cook else []
+    for recipe in candidate_recipes:
         if not recipe['recipe_id'].startswith('foodcom-'):
             continue
         # This endpoint plans meals, not desserts or drinks that happen to contain eggs/oats.
@@ -79,7 +81,7 @@ def plan(request, recipes, normalize):
             continue
         duration = recipe.get('total_minutes')
         needed = {normalize(i['name']) for i in recipe['ingredient_items']}
-        if not duration or duration > window or not needed or needed & excluded:
+        if not duration or duration > window or not needed or contains_excluded(needed, excluded):
             continue
         matched = needed & available
         if available and not matched:
@@ -107,12 +109,16 @@ def plan(request, recipes, normalize):
                      'Spring': 'Consider locally available leafy greens.',
                      'Summer': 'Consider a cool meal and locally available vegetables.',
                      'Autumn': 'Consider locally available squash or root vegetables.'}.get(season, 'Use local seasonal information for produce choices.')
-    decision = ('Cooking fits your free window. Compare missing ingredients and source quantities before deciding.' if ranked and request.willing_to_cook else
-                'A ready-to-eat meal can fit a busy day. Compare protein foods, vegetables and portions. Explore Boston activities below to make time for something you enjoy.')
+    planning_mode = 'cook' if request.willing_to_cook else 'ready_to_eat'
+    decision = ('Cooking fits your free window. Compare missing ingredients and source quantities before deciding.' if ranked else
+                'No source recipe fits this cooking window and pantry. Adjust the time or ingredients.' if request.willing_to_cook else
+                'Cooking recipes are intentionally omitted for ready-to-eat mode. Review the source-backed prepared meals and food resources below, and confirm the current schedule before travelling.')
     return {'goals': [{'id': g.value, 'label': GOALS[g.value][0], 'guidance': GOALS[g.value][1]} for g in dict.fromkeys(request.goals)],
             'season': season, 'seasonal_note': seasonal_note,
             'season_basis': 'Calendar season by selected hemisphere; a planning prompt, not a local harvest or weather forecast. Season does not change recipe scores.',
             'free_minutes': round(window), 'recipes': ranked[:3], 'decision': decision,
+            'planning_mode': planning_mode,
+            'ready_to_eat_resources_endpoint': '/api/food-resources/boston' if not request.willing_to_cook else None,
             'activity': {'suggestion': 'If comfortable, choose a short walk or movement break. For strength goals, plan resistance training on separate days; start at a level that suits your ability.',
                          'weekly_context': 'General adult guidance: at least 150 minutes of moderate activity per week and muscle strengthening on 2 days. This meal plan does not calculate exercise calorie burn.',
                          'source_url': 'https://www.cdc.gov/physical-activity-basics/guidelines/adults.html'},

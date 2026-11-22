@@ -20,13 +20,39 @@ Five-class official held-out test (1,250 images): **Top-1 91.60%, Macro-F1 0.916
 
 ## Local start
 
-The current machine has a configured, ignored root `.env`, local weights, data and a backend environment. Run Ollama if it is not already serving:
+The original development machine has a configured, ignored root `.env`, local weights, data and a backend environment. On any machine, run Ollama first if you configured an Ollama-backed feature:
 
 ```sh
 ollama serve
 ```
 
-Then in the repository root:
+### Windows PowerShell
+
+From the repository root, start the backend:
+
+```powershell
+.\scripts\start-backend.ps1
+```
+
+Use `-Reload` during backend development. The script deliberately uses `backend\.venv\Scripts\python.exe` and fails with setup instructions when the Windows virtual environment is missing.
+
+In a second PowerShell window, start the frontend:
+
+```powershell
+Set-Location frontend
+npm ci  # First run, or after package-lock.json changes
+npm run dev
+```
+
+If PowerShell blocks local scripts, either use a process-only policy for that terminal or invoke the script without changing the machine policy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-backend.ps1
+```
+
+### macOS or Linux
+
+From the repository root:
 
 ```sh
 sh scripts/start-backend.sh
@@ -45,6 +71,26 @@ Open http://127.0.0.1:5173. API docs: http://127.0.0.1:8000/docs.
 ## Fresh setup / reproduce
 
 Use Python 3.11+ (actual local training: Python 3.13, Apple M4/16GB) and Node 20.19+ or 22.12+.
+
+### Windows PowerShell setup
+
+The following creates a Windows-native backend environment and installs the web/API dependencies. It is sufficient to start the application with the labeled demo records; real Food.com data and optional AI providers still require the data/model provisioning described below.
+
+```powershell
+py -3 --version
+py -3 -m venv backend\.venv
+& .\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
+& .\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.lock.txt
+Copy-Item .env.example .env
+
+Set-Location frontend
+npm ci
+Set-Location ..
+```
+
+Edit the ignored root `.env` if you want Ollama, semantic embeddings, Diffusion, CNN classification or ingredient-photo recognition. Leave optional provider values empty to run the deterministic recipe flow without those providers.
+
+### macOS or Linux setup
 
 ```sh
 cd backend
@@ -70,6 +116,12 @@ Copy `.env.example` to `.env`; configure your own Ollama models, Diffusion model
 ```sh
 cd backend
 .venv/bin/python -m pytest tests -q
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+& .\backend\.venv\Scripts\python.exe -m pytest .\backend\tests -q
 ```
 
 ```sh
@@ -99,13 +151,15 @@ Provider evaluation includes prior development images from local `output/local-a
 
 ## Known dependency issue
 
-The current npm audit reports four high-severity findings in the Vite development-tool chain (picomatch/fdir/tinyglobby). The attempted automatic fix did not resolve them. Review and update these dependencies before deployment. Development services bind to loopback only; production hosting, access control, durable image jobs and cancellation are not implemented.
+The current npm audit reports four high-severity findings in the Vite development-tool chain (picomatch/fdir/tinyglobby). The attempted automatic fix did not resolve them. Review and update these dependencies before deployment. Development services bind to loopback only. Image generation now uses a persistent SQLite status record and a bounded single-worker queue; queued work can be cancelled, while an already-running local inference cannot be interrupted safely. Production hosting, access control, job deadlines, retention cleanup and multi-process coordination are not implemented.
 
 ### Lifestyle meal planner
 
 The English interface now supports nine combinable goals: balanced eating, weight maintenance, weight management, strength, endurance, plant variety, saving time, spending less, and reducing pantry waste. `GET /api/goals` provides the catalog; `POST /api/plan` accepts offset-aware free-window and meal timestamps, hemisphere, pantry/exclusions and cooking preference.
 
 Plans use source total cooking time and transparent ingredient heuristics (60% selected-goal fit, 40% ingredient coverage). Obvious desserts/drinks are excluded by title/category rules. Budget uses missing ingredient count, not real prices. Calendar seasons provide general prompts, not local harvest/weather claims. This is a single-meal plan; it does not import a calendar, prescribe a calorie deficit or validate an entire day's nutritional adequacy.
+
+Choosing **Prefer a ready-to-eat meal** now switches the API to `ready_to_eat` mode: cooking recipes are intentionally omitted and the interface directs the user to the source-backed prepared-meal and food-resource list below. It does not invent restaurants or treat grocery pickup as a guaranteed prepared meal.
 
 Run `backend/.venv/bin/python scripts/backfill_nutrition.py` after the existing data preparation/import to refresh original Calories, ProteinContent, CarbohydrateContent, FatContent and FiberContent for the 5,106 local records. Preparation scripts also preserve these fields for future imports. **Nutrition serving basis remains unverified**, so the interface labels source-reported calories and does not rescale them or use them as personal targets.
 
@@ -129,7 +183,7 @@ Live integration check (with the API running): `backend/.venv/bin/python scripts
 
 ### Free food options, not merely free admission
 
-The activity interface now focuses on **free food** through `GET /api/food-resources/boston`. It separates prepared meals, groceries to cook, community fridges and one-off events explicitly mentioning free food. The reviewed starter registry covers four services at two addresses: Allston Brighton Food Pantry's Wednesday hot meal/groceries and community fridge, and Friday Night Supper's dinner service. Each record keeps its provider link, eligibility, published schedule, review date, source-check status and approximate Census map location.
+The activity interface now focuses on **free food** through `GET /api/food-resources/boston`. It separates prepared meals, groceries to cook, community fridges and one-off events explicitly mentioning free food. The validated data registry in `data_metadata/boston_food_resources.json` currently covers four services at two addresses: Allston Brighton Food Pantry's Wednesday hot meal/groceries and community fridge, and Friday Night Supper's dinner service. New reviewed records can be added without editing Python code. Each record keeps its provider link, eligibility, published schedule, review date, source-check status and approximate Census map location.
 
 Regular programs are manually reviewed summaries, with five-minute checks that the source still contains the reviewed details. They are **not** a complete Boston resource directory or a real-time inventory/opening-hours API. Changed or unreachable sources display `needs_recheck`. Prices are not inferred from free admission, donation drives or generic food mentions. The city RSS contributes only explicit free-food evidence; no matching event is an honest empty result. Fridge stock, exact menus, calories, dietary suitability, holiday changes and immediate meal availability remain unknown. Source pages: [Allston Brighton services](https://abfoodpantry.com/services/) and [Friday Night Supper guest information](https://www.fridaynightsupper.org/be-our-guest); its address is documented on the [provider contact page](https://www.fridaynightsupper.org/contact).
 

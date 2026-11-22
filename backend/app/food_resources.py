@@ -2,20 +2,49 @@
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from datetime import datetime,timedelta,timezone
+import json
+from pathlib import Path
 from threading import Lock
 import time
+from urllib.parse import urlsplit
 import httpx
 from bs4 import BeautifulSoup
 from .events import BOSTON, HEADERS, fetch_bytes, geocode, get_events, EventsUnavailable
 
-AB='https://abfoodpantry.com/services/'
-FRIDAY='https://www.fridaynightsupper.org/be-our-guest'
+ROOT=Path(__file__).resolve().parents[2]
+REGISTRY_PATH=ROOT/'data_metadata'/'boston_food_resources.json'
+
+
+def load_registry(path=REGISTRY_PATH):
+    payload=json.loads(Path(path).read_text(encoding='utf-8'))
+    sources=payload.get('sources')
+    resources=payload.get('resources')
+    if not isinstance(sources,list) or not isinstance(resources,list) or not resources:
+        raise ValueError('Food resource registry requires non-empty sources and resources lists')
+    source_rules={}
+    for source in sources:
+        url=source.get('url')
+        phrases=source.get('required_phrases')
+        parsed=urlsplit(url or '')
+        if parsed.scheme!='https' or not parsed.netloc or not isinstance(phrases,list) or not phrases or any(not isinstance(x,str) or not x.strip() for x in phrases):
+            raise ValueError('Each food resource source needs an HTTPS URL and required phrases')
+        source_rules[url]=phrases
+    required={'id','title','resource_type','address','source_url','food_offer','full_meal','eligibility','schedule_note','weekday','hours','reviewed_on'}
+    seen=set()
+    for record in resources:
+        if set(record)!=required or record['id'] in seen or record['source_url'] not in source_rules:
+            raise ValueError('Food resource records must have the exact schema, unique IDs and a known source')
+        seen.add(record['id'])
+        weekday=record['weekday']; hours=record['hours']
+        if weekday is not None and (not isinstance(weekday,int) or not 0<=weekday<=6 or not isinstance(hours,list) or len(hours)!=2 or not all(isinstance(x,int) and 0<=x<=23 for x in hours) or hours[1]<=hours[0]):
+            raise ValueError('Scheduled resources need a valid weekday and increasing hour range')
+        if weekday is None and hours is not None:
+            raise ValueError('Always-available resources must not define hours')
+    return source_rules,resources
+
+
 # Manually reviewed source summaries, not a complete directory or live stock feed.
-REGISTRY=[
- {'id':'ab-hot-meal','title':'Allston Brighton · hot meal & groceries','resource_type':'meal','address':'404 Washington Street, Brighton, MA 02135','source_url':AB,'food_offer':'Freshly prepared hot takeout meal and a bag of groceries.','full_meal':True,'eligibility':'Provider welcomes everyone; no proof of need required.','schedule_note':'Published Wednesday distribution: 3–6 PM. Confirm holiday changes with the provider.','weekday':2,'hours':(15,18)},
- {'id':'ab-fridge','title':'Allston-Brighton Community Fridge','resource_type':'fridge','address':'404 Washington Street, Brighton, MA 02135','source_url':AB,'food_offer':'Self-service donated food and pantry items. Contents vary; a prepared meal is not guaranteed.','full_meal':None,'eligibility':'Provider describes self-service access for the community.','schedule_note':'Provider lists 24/7 access. Stock and fridge operation are not monitored.','weekday':None,'hours':None},
- {'id':'ab-groceries','title':'Allston Brighton · grocery pickup','resource_type':'groceries','address':'404 Washington Street, Brighton, MA 02135','source_url':AB,'food_offer':'Fresh groceries for cooking; pantry baskets also have a separate Saturday schedule.','full_meal':False,'eligibility':'Provider welcomes everyone; no proof of need required.','schedule_note':'Wednesday 3–6 PM. Saturday pickup times must be checked with the provider.','weekday':2,'hours':(15,18)},
- {'id':'friday-supper','title':'Friday Night Supper · free prepared dinner','resource_type':'meal','address':'351 Boylston Street, Boston, MA 02116','source_url':FRIDAY,'food_offer':'Prepared dinner service; soup and drinks are also described. Exact menu changes.','full_meal':True,'eligibility':'Everyone welcome. Provider says no registration or sign-up is required.','schedule_note':'Published Friday service: 5–7 PM, lower level of Arlington Street Church. Confirm changes before travel.','weekday':4,'hours':(17,19)}]
+SOURCE_RULES,REGISTRY=load_registry()
 _cache=None
 _attempt=0.
 _lock=Lock()
@@ -51,9 +80,7 @@ def next_service(record,now):
 def _source_check(client,url):
     try:
         text=BeautifulSoup(fetch_bytes(client,url,2*1024*1024),'html.parser').get_text(' ',strip=True).lower()
-        if url==AB:
-            return all(x in text for x in ['hot meal','free community fridge','3–6pm'])
-        return all(x in text for x in ['free nutritious meal','5:00pm-7:00pm'])
+        return all(phrase.lower() in text for phrase in SOURCE_RULES[url])
     except (httpx.HTTPError,ValueError):
         return False
 
@@ -82,7 +109,7 @@ def get_food_resources(refresh=False):
                       'category':record['resource_type'],'virtual':False,'cancelled':False,'source':'Provider-published program',
                       'coordinates':snapshot['points'][record['address']], 'source_status':'source_matches_reviewed_details' if confirmed else 'needs_recheck',
                       'schedule_basis':'Recurring published schedule; not a verified booking or live opening status',
-                      'reviewed_on':'2026-11-17','source_checked_at':snapshot['checked_at'], 'stock_status':'unknown','calories_kcal':None})
+                      'source_checked_at':snapshot['checked_at'], 'stock_status':'unknown','calories_kcal':None})
     warning=None
     event_count=0
     try:

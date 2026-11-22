@@ -40,7 +40,7 @@ Start your own Ollama service, provision a compatible model, then export `OLLAMA
 
 Set `DIFFUSION_MODEL` to a compatible SDXL Turbo pipeline, for example `stabilityai/sdxl-turbo`, only after verifying license and hardware. Parameters are configurable: `DIFFUSION_STEPS` (default 4), `DIFFUSION_GUIDANCE` (default 0), 512px. For SD 1.5 use 20 steps and guidance 7.5. CUDA uses float16; CPU/MPS use float32; MPS enables attention slicing. First call may download weights. Generation is synchronous, one request per process; concurrent requests return 503. Generated PNGs are saved under ignored `generated/`, served at `/generated/`, and explicitly labeled AI-generated in the UI.
 
-There is no durable job queue, cancellation, inference deadline, retention policy, or multi-process concurrency control. Slow generation can exceed browser/proxy timeouts. Use this only for local development until those concerns are addressed.
+`POST /api/image-jobs` creates a job in an ignored SQLite status database. A single-worker executor bounds local model concurrency; `GET /api/image-jobs/{job_id}` supports polling, and `DELETE` cancels work that has not started. Restarted queued/running records are marked failed instead of remaining stuck. An already-running Diffusion call cannot be interrupted safely, and there is no inference deadline, retention policy or multi-process queue coordination. Use this only for local development until those concerns are addressed.
 
 ### CNN
 

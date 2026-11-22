@@ -1,13 +1,30 @@
-Pantry Studio v0.3 — local research prototype
-Python 3.11+ (tested 3.13 on Apple M4/16GB), Node 20.19+ or 22.12+.
-Local setup is complete on this computer. Root .env loads automatically.
-1. Run ollama serve if not already running.
-2. From repository root: sh scripts/start-backend.sh
+Pantry Studio v0.4 — local research prototype
+Python 3.11+ (originally tested with Python 3.13 on Apple M4/16GB), Node 20.19+ or 22.12+.
+The backend automatically loads an ignored .env file from the repository root.
+
+WINDOWS POWERSHELL — FIRST SETUP
+1. From the repository root: py -3 -m venv backend\.venv
+2. Install the API dependencies:
+   & .\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.lock.txt
+3. Create local configuration: Copy-Item .env.example .env
+4. Install frontend dependencies: Set-Location frontend; npm ci; Set-Location ..
+
+WINDOWS POWERSHELL — START
+1. Run "ollama serve" if an Ollama-backed feature is configured.
+2. From the repository root: .\scripts\start-backend.ps1
+3. In a second PowerShell window: Set-Location frontend; npm run dev
+4. Optional backend auto-reload: .\scripts\start-backend.ps1 -Reload
+5. If local scripts are blocked for this terminal:
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-backend.ps1
+
+MACOS OR LINUX — START
+1. Run "ollama serve" if an Ollama-backed feature is configured.
+2. From the repository root: sh scripts/start-backend.sh
 3. In a second terminal: cd frontend; npm ci; npm run dev
+
 Browser: http://127.0.0.1:5173
 API docs: http://127.0.0.1:8000/docs
-App has 5106 real Food.com recipes and 6 separately labeled fixtures.
-CNN supports only dumplings/fried_rice/omelette/pizza/ramen.
+Without imported data the backend starts with 6 labeled demo records. The provisioned development environment has 5106 real Food.com recipes plus those fixtures.
+CNN supports only dumplings/fried_rice/omelette/pizza/ramen and requires locally configured weights.
 Upload a supported photo, inspect Top-3, confirm/correct the class, then retrieve recipes.
-No credentials are required for local Ollama/MPS inference. Models/data are local and ignored by Git.
-For reproduction, data source terms, model training, evaluation and limits, see README.md and evaluation/REPORT.zh.md.
+Local models/data are ignored by Git. See README.md and evaluation/REPORT.zh.md for provisioning, evaluation and limitations.

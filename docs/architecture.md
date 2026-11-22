@@ -11,7 +11,8 @@ The backend owns filtering and scoring. UI renders source metadata and original 
 - `GET /api/health`: dataset count and provider readiness.
 - `POST /api/recommend`: ingredients (1–50), max_cooking_time (1–1440), cuisine, servings (1–20), excluded_ingredients, top_k (1–10). Returns recommendations, total_candidates, ranking_method, dataset_notice.
 - `POST /api/explain`: recipe_id. Returns a grounded Ollama explanation if configured, otherwise a labeled template.
-- `POST /api/generate-image`: recipe_id. Validates recipe existence, calls optional local Diffusers pipeline; returns image metadata or 503.
+- `POST /api/generate-image`: legacy synchronous recipe image request.
+- `POST /api/image-jobs`: creates a persistent, single-worker local image job; `GET /api/image-jobs/{job_id}` reports state and `DELETE` cancels a queued job.
 - `POST /api/classify-food`: raw image body, capped at 5 MB; optional custom ResNet18 Top-3 inference, or 503.
 
 ## Ranking v1

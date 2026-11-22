@@ -44,9 +44,12 @@ def test_invalid_or_conflicting_preferences():
 
 
 def test_ready_meal_option_does_not_invent_businesses():
-    result=plan(request(willing_to_cook=False),[],str.lower)
+    result=plan(request(willing_to_cook=False),[recipe('cook-me',['egg'])],str.lower)
     assert 'takeout' not in result
     assert 'ready-to-eat' in result['decision']
+    assert result['planning_mode']=='ready_to_eat'
+    assert result['recipes']==[]
+    assert result['ready_to_eat_resources_endpoint']=='/api/food-resources/boston'
 
 
 def test_desserts_and_substring_matches_do_not_become_balanced_meals():

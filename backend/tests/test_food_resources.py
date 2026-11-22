@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.food_resources import free_food_evidence,next_service,REGISTRY,get_food_resources
+from app.food_resources import free_food_evidence,next_service,REGISTRY,get_food_resources,load_registry
 from app.events import BOSTON
 from app import food_resources as foods
 
@@ -28,3 +28,13 @@ def test_source_failure_is_explicit_and_stock_is_never_claimed(monkeypatch):
     assert result['status']=='partial'
     assert all(e['source_status']=='needs_recheck' and e['stock_status']=='unknown' for e in result['events'])
     assert all(e['calories_kcal'] is None for e in result['events'])
+
+
+def test_registry_is_data_driven_and_rejects_unknown_sources(tmp_path):
+    import json
+    assert len(REGISTRY)==4 and all('reviewed_on' in item for item in REGISTRY)
+    path=tmp_path/'registry.json'
+    path.write_text(json.dumps({'sources':[], 'resources':[{'id':'bad'}]}),encoding='utf-8')
+    import pytest
+    with pytest.raises(ValueError):
+        load_registry(path)

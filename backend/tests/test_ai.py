@@ -91,3 +91,20 @@ def test_non_english_llm_output_falls_back(monkeypatch):
     assert data['status'] == 'fallback'
     assert data['is_llm_generated'] is False
     assert 'LLM unavailable' in data['text']
+
+
+def test_image_job_api_contract(monkeypatch):
+    monkeypatch.setenv('DIFFUSION_MODEL','configured-for-contract-test')
+    class Manager:
+        def submit(self, recipe, output_dir):
+            return {'job_id':'job-1','recipe_id':recipe['recipe_id'],'status':'queued','created_at':'now','updated_at':'now','result':None,'error':None}
+        def get(self, job_id):
+            return {'job_id':job_id,'recipe_id':'demo-001','status':'completed','created_at':'now','updated_at':'now','result':{'url':'/generated/test.png'},'error':None}
+        def cancel(self, job_id):
+            return {'job_id':job_id,'recipe_id':'demo-001','status':'cancelled','created_at':'now','updated_at':'now','result':None,'error':'cancelled'}
+    monkeypatch.setattr(main,'get_image_job_manager',lambda:Manager())
+    with TestClient(main.app) as client:
+        created=client.post('/api/image-jobs',json={'recipe_id':'demo-001'})
+        assert created.status_code==202 and created.json()['status']=='queued'
+        assert client.get('/api/image-jobs/job-1').json()['status']=='completed'
+        assert client.delete('/api/image-jobs/job-1').json()['status']=='cancelled'

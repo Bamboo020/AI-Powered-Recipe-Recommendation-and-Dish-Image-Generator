@@ -13,6 +13,8 @@ from typing import Literal
 from .dishes import DISH_PATTERNS, matches_dish, is_meal_candidate
 from .planner import GOALS, PlanRequest, plan
 from .events import EventsUnavailable, get_events
+from .image_jobs import ImageJobConflict, ImageJobManager, ImageJobNotFound
+from .ingredient_rules import contains_excluded
 
 from dotenv import load_dotenv
 
@@ -27,6 +29,8 @@ ALIASES = {
     "洋葱": "onion", "大蒜": "garlic", "面条": "noodles", "豆腐": "tofu",
     "酱油": "soy_sauce", "soy sauce": "soy_sauce", "葱": "scallion",
     "橄榄油": "olive_oil", "olive oil": "olive_oil", "油": "oil", "盐": "salt",
+    "peanuts": "peanut", "peanut butter": "peanut_butter",
+    "almonds": "almond", "walnuts": "walnut", "cashews": "cashew",
     "中式家常": "chinese_home_style", "chinese": "chinese_home_style",
     "意式": "italian", "不限": "any",
 }
@@ -43,19 +47,36 @@ def read_recipes():
 
 @asynccontextmanager
 async def lifespan(app):
+    global _image_jobs
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(DB_PATH) as connection:
         connection.execute("CREATE TABLE IF NOT EXISTS recipes (recipe_id TEXT PRIMARY KEY, payload TEXT NOT NULL)")
         for recipe in json.loads((ROOT / "data_metadata/demo_recipes.json").read_text()):
             connection.execute("INSERT INTO recipes VALUES (?, ?) ON CONFLICT(recipe_id) DO UPDATE SET payload=excluded.payload", (recipe["recipe_id"], json.dumps(recipe, ensure_ascii=False)))
-    yield
+    try:
+        yield
+    finally:
+        if _image_jobs is not None:
+            _image_jobs.shutdown()
+            _image_jobs = None
 
 
-app = FastAPI(title="Pantry Studio Recipe API", version="0.3.0", lifespan=lifespan)
+app = FastAPI(title="Pantry Studio Recipe API", version="0.4.0", lifespan=lifespan)
 IMAGE_DIR = ROOT / "generated"
+IMAGE_JOB_DB_PATH = Path(os.getenv("IMAGE_JOB_DB_PATH") or str(ROOT / "image_jobs.sqlite3"))
+_image_jobs = None
+
+
+def get_image_job_manager():
+    global _image_jobs
+    if _image_jobs is None:
+        _image_jobs = ImageJobManager(IMAGE_JOB_DB_PATH, generate_recipe_image)
+    return _image_jobs
+
+
 app.mount("/generated", StaticFiles(directory=str(IMAGE_DIR), check_dir=False), name="generated")
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["GET", "POST", "DELETE"], allow_headers=["Content-Type"])
 
 
 class RecipeRequest(BaseModel):
@@ -119,7 +140,7 @@ def recommend(request: RecipeRequest):
         needed = {normalize(item["name"]) for item in recipe["ingredient_items"]}
         if request.meal_only and len(needed) < 2:
             continue
-        if needed & excluded or recipe["total_minutes"] is None or recipe["total_minutes"] > request.max_cooking_time:
+        if contains_excluded(needed, excluded) or recipe["total_minutes"] is None or recipe["total_minutes"] > request.max_cooking_time:
             continue
         matched = needed & available
         if not matched and not request.dish_category:
@@ -180,6 +201,32 @@ def generate_image(request: SelectedRecipe):
         return generate_recipe_image(recipe, IMAGE_DIR)
     except AIUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post("/api/image-jobs", status_code=202)
+def create_image_job(request: SelectedRecipe):
+    recipe = find_recipe(request.recipe_id)
+    if not os.getenv("DIFFUSION_MODEL"):
+        raise HTTPException(status_code=503, detail="Diffusion service is not configured. No image job was created.")
+    return get_image_job_manager().submit(recipe, IMAGE_DIR)
+
+
+@app.get("/api/image-jobs/{job_id}")
+def get_image_job(job_id: str):
+    try:
+        return get_image_job_manager().get(job_id)
+    except ImageJobNotFound as exc:
+        raise HTTPException(status_code=404, detail="Image job not found") from exc
+
+
+@app.delete("/api/image-jobs/{job_id}")
+def cancel_image_job(job_id: str):
+    try:
+        return get_image_job_manager().cancel(job_id)
+    except ImageJobNotFound as exc:
+        raise HTTPException(status_code=404, detail="Image job not found") from exc
+    except ImageJobConflict as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
 @app.post("/api/classify-food")

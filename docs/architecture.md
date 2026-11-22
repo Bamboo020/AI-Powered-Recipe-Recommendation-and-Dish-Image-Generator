@@ -1,29 +1,72 @@
-# Architecture v0.2
+# Architecture v0.4 — current source state
 
-See [AI architecture and configuration](ai-architecture.md) for implemented optional providers and current limits.
+Status date: 2026-11-22.
 
-Browser → Vite dev proxy → FastAPI → SQLite recipe repository → rule ranking.
+Pantry Studio is a modular local web application:
 
-The backend owns filtering and scoring. UI renders source metadata and original steps. Recommendation returns immediately without model calls. Explanation and image requests are separate actions.
+```text
+React/Vite UI -> FastAPI -> SQLite recipes
+                         -> deterministic filtering/ranking
+                         -> optional local AI providers
+                         -> public Boston information sources
+```
+
+The recommendation path does not require an AI model. LLM explanations, generated images, image classification and ingredient-photo recognition are optional actions with explicit fallbacks or 503 responses.
+
+## Current checkout state
+
+- The source code, metadata, tests and historical evaluation reports are present.
+- `D:\CondaEnvs\myenv` contains the verified Windows training environment.
+- The ignored `data/` directories exist but contain no datasets in this checkout.
+- No root `.env`, `recipes.sqlite3` or `image_jobs.sqlite3` currently exists.
+- `model_assets/food101_5class/labels.json` is present, but the ResNet18 checkpoint is not.
+- On first backend startup, SQLite is created and six labeled `demo-` recipes are inserted. Real `foodcom-` recipes appear only after the import pipeline is run.
+
+## Components
+
+| Component | Responsibility | Current source implementation |
+| --- | --- | --- |
+| React/Vite | Recipe search, photo upload, ingredient-photo confirmation, meal planning and Boston resource UI | Implemented |
+| FastAPI | Validation, orchestration, provider fallbacks and static generated-image serving | Implemented |
+| SQLite | Recipe payloads and image-job state | Created locally at runtime |
+| Rule recommender | Time, exclusions, optional meal/category filters and stable ranking | Implemented |
+| Semantic reranker | Optional Sentence Transformer or Ollama embeddings over at most 128 shortlisted candidates | Implemented, not configured in the current checkout |
+| Ollama LLM | Source-grounded recipe explanation | Implemented, not configured |
+| Diffusers | Local text-to-image generation | Implemented, not configured |
+| ResNet18 | Five-category food-image classification | Adapter implemented; checkpoint absent |
+| Ollama vision | Up to three ingredient photos followed by user confirmation | Implemented, not configured |
+| Boston services | Boston.gov events, Census geocoding and reviewed food-resource registry | Implemented; live refresh requires network access |
 
 ## API contracts
 
-- `GET /api/health`: dataset count and provider readiness.
-- `POST /api/recommend`: ingredients (1–50), max_cooking_time (1–1440), cuisine, servings (1–20), excluded_ingredients, top_k (1–10). Returns recommendations, total_candidates, ranking_method, dataset_notice.
-- `POST /api/explain`: recipe_id. Returns a grounded Ollama explanation if configured, otherwise a labeled template.
-- `POST /api/generate-image`: legacy synchronous recipe image request.
-- `POST /api/image-jobs`: creates a persistent, single-worker local image job; `GET /api/image-jobs/{job_id}` reports state and `DELETE` cancels a queued job.
-- `POST /api/classify-food`: raw image body, capped at 5 MB; optional custom ResNet18 Top-3 inference, or 503.
+- `GET /api/health`: recipe counts, dataset mode and provider configuration state.
+- `POST /api/recommend`: ingredient/category recommendation with dataset and meal filters.
+- `GET /api/goals`, `POST /api/plan`: heuristic lifestyle-goal meal planning.
+- `GET /api/events/boston`: Boston.gov event feed with cached/geocoded results.
+- `GET /api/food-resources/boston`: reviewed recurring programs plus qualifying city events.
+- `POST /api/explain`: Ollama explanation or deterministic template fallback.
+- `POST /api/generate-image`: legacy synchronous image generation.
+- `POST /api/image-jobs`, `GET/DELETE /api/image-jobs/{job_id}`: single-worker local image jobs.
+- `POST /api/classify-food`: raw JPEG/PNG/WebP classification, maximum 5 MB.
+- `POST /api/identify-ingredients`: one to three base64 images, each maximum 5 MB and 16 MP.
 
-## Ranking v1
+## Recommendation behavior
 
-Normalize aliases → exclude recipes containing forbidden ingredients → exclude unknown or excessive times → require at least one available ingredient match → rank → stable recipe ID tie-break → Top-K.
+The deterministic baseline normalizes limited aliases, applies dataset/category/meal filters, rejects excluded ingredients and excessive or unknown cooking times, and requires an ingredient match unless a confirmed category is supplied.
 
-Score = 0.60 × ingredient coverage + 0.20 × time fit + 0.20 × cuisine fit.
-Coverage = matched / all listed ingredients (including oil/salt). Time fit = 1 − recipe time / time budget. Cuisine is a soft preference; `any` scores 1 for all. Weights are hypotheses. Optional semantic scoring uses hybrid weights documented in the AI architecture; failures revert to this baseline.
+Baseline score:
 
-## Remaining work
+```text
+0.60 ingredient coverage + 0.20 time fit + 0.20 cuisine fit
+```
 
-Real dataset import, five-class CNN training/evaluation, confirmed category mapping and upload UI are implemented. Durable generation jobs, human relevance evaluation and production deployment remain pending. No credentials or weights are bundled.
+When semantic embeddings are available:
 
-Version 0.3 adds `dataset` (real/demo/all) and optional confirmed `dish_category` to recommendation requests. Ingredients can be empty only with a supported confirmed category. Semantic reranking is capped at 128 rule-shortlisted candidates. Photo category mapping uses explicit title/source-category rules and excludes obvious dessert/dough mismatches.
+```text
+0.40 ingredient coverage + 0.25 time fit
++ 0.20 cuisine fit + 0.15 semantic similarity
+```
+
+These weights are engineering hypotheses, not learned or clinically validated. Exclusion matching is not an allergy guarantee. Meal-plan goal scores are also transparent keyword heuristics, not medical or nutrition prescriptions.
+
+See `ai-architecture.md` for model boundaries and `windows-training.zh.md` for the prepared training environment.

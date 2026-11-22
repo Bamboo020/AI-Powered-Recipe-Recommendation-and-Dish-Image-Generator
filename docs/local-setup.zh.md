@@ -1,43 +1,68 @@
-# 本机 AI 配置记录
+# 当前本机运行环境记录
 
-日期：2026-11-17。Apple M4，16GB 统一内存，Python 3.13。复用已有模型，未下载新的大模型。
+状态日期：2026-11-22。
 
-| 服务 | 本机配置 | 实测 |
-| --- | --- | --- |
-| 语义向量 | Ollama `nomic-embed-text:latest` | 推荐返回 hybrid_semantic_v1；首次约 1.98 秒 |
-| LLM | Ollama `qwen2.5:7b` | 返回真实中文说明，约 15.38 秒 |
-| Diffusion | 本地 Stable Diffusion 1.5 缓存，MPS、20 步、guidance 7.5、512px | 首次成功保存 PNG，含导入/加载约 90.53 秒，采样约 29 秒 |
-| CNN | 本地五类 ResNet18 权重与有序 labels.json | 已训练分类头；官方测试 Top-1 91.60% |
+## 硬件与 Python
 
-以上是单次功能验证，不是性能基准或质量评估。首次图片偏离炒饭外观，因而为演示记录增加了英文菜品视觉描述；调整后第二次生成耗时约 32.55 秒（采样约 21 秒），仍需人工核对生成内容。
+| 项目 | 当前值 |
+| --- | --- |
+| 操作系统 | Windows 11 |
+| GPU | NVIDIA GeForce RTX 4080 Laptop GPU |
+| 显存 | 约 12 GB |
+| Python | 3.14.7 |
+| 解释器 | `D:\CondaEnvs\myenv\python.exe` |
+| PyTorch | 2.14.1+cu132 |
+| CUDA 可用性 | 已通过 `torch.cuda.is_available()` 验证 |
+| 模型缓存 | `D:\CondaEnvs\myenv\cache` |
 
-## 启动
+旧的 Apple M4/MPS 实测记录只保留在 `evaluation/results` 的历史报告中，不再代表当前机器。
 
-根目录 `.env` 已写入本机实际路径且由 Git 忽略。服务器启动时自动加载；Shell 环境变量优先。
+## 当前文件状态
 
-```sh
-# 终端 1：若 Ollama 尚未运行
-ollama serve
-# 终端 2：项目根目录
-sh scripts/start-backend.sh
-# 终端 3
-cd frontend
+- `D:\CondaEnvs\myenv` 已安装基础后端、AI 推理和训练依赖。
+- Diffusers 官方训练示例位于 `D:\CondaEnvs\myenv\src\diffusers`。
+- 项目根目录目前没有 `.env`。
+- `data/` 目录目前没有原始或处理后的数据文件。
+- 当前没有 `recipes.sqlite3` 和 `image_jobs.sqlite3`；启动后按需创建。
+- CNN 标签文件存在，但 `resnet18.pt` checkpoint 不存在。
+
+## 启动基础应用
+
+当前 `scripts/start-backend.ps1` 面向 `backend\.venv`。若直接复用已经配置好的训练环境，应在项目根目录执行：
+
+```powershell
+Copy-Item .env.example .env
+Set-Location backend
+& 'D:\CondaEnvs\myenv\python.exe' -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+另开终端启动前端：
+
+```powershell
+Set-Location 'D:\2026Fall\AI\Final Project\AI-Dish-Test\frontend'
 npm ci
 npm run dev
 ```
 
-浏览器：http://127.0.0.1:5173 。后端状态：http://127.0.0.1:8000/api/health 。
+浏览器地址为 `http://127.0.0.1:5173`，后端状态为 `http://127.0.0.1:8000/api/health`。
 
-服务端 `.env` 包含 `OLLAMA_EMBED_MODEL`、`OLLAMA_MODEL`、`DIFFUSION_MODEL`、`AI_DEVICE=mps` 等本机设置。其他机器参考 `.env.example`，自行指定模型目录与算力，不能直接复制本机缓存路径。
+如果不设置任何 AI 环境变量，基础应用仍可使用明确标注的 demo 数据和确定性逻辑；模型相关功能会显示未配置、使用模板回退或返回 503。
 
-## 限制与下一步
+## 完整功能所需的额外准备
 
-- 食谱库已有 5,106 条真实 Food.com 记录，另有六条单独标记的样例。
-- nomic 是本机现有的功能基线；中文检索质量尚未评估，可换多语言 SentenceTransformer。
-- LLM 与 Diffusion 是预训练模型推理；CNN 只训练了分类头；LLM 文字仍需核对。
-- 图像生成是同步单图接口，没有持久化任务队列与取消功能。
-- Ollama 请求结束卸载模型，Diffusion 默认在生成后释放缓存权重，以降低统一内存压力。
-- `CNN_CHECKPOINT` 和 `CNN_LABELS_PATH` 已配置本机五类权重；重现流程见 README。
-- 完整依赖快照在 `backend/requirements-local-ai.lock.txt`，对应本机环境；基础 CI 仍使用独立的轻量依赖。
+1. 按 `windows-training.zh.md` 下载并处理 Food.com 与 Food-101。
+2. 导入 Food.com 后才会出现真实食谱和真实数据餐食计划。
+3. 在 `.env` 中选择实际存在的 Ollama、Embedding、Diffusion 和 CNN 路径。
+4. 当前 CNN 必须先重新训练或取得可信 checkpoint。
+5. Ollama 服务及其模型需要单独安装/拉取；本项目没有自动下载。
+6. 对 Boston 在线数据功能，需要允许访问 Boston.gov、美国 Census Geocoder 和登记的资源来源。
 
-整体结构见 [系统架构](system-architecture.zh.md)。原始实测响应保存在忽略目录 `output/local-ai-smoke.json`，生成图片位于忽略目录 `generated/`。
+## 已验证范围
+
+- 训练环境依赖导入成功，CUDA 检测成功。
+- 46 个后端测试通过。
+- Python 训练脚本可编译并显示命令行参数。
+- PowerShell 设置、下载和 Diffusion 启动脚本通过语法检查。
+- Diffusers 官方训练示例能够加载；`torchao` 缺失仅对使用 torchao 序列化的特定 checkpoint 有影响，当前流程不依赖它。
+
+这些验证没有替代真实数据下载、模型权重下载或完整训练。

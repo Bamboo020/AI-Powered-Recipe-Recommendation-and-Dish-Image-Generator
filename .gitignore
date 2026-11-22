@@ -1,5 +1,6 @@
 .env
 .venv/
+.uv-cache/
 __pycache__/
 .pytest_cache/
 node_modules/
@@ -11,4 +12,5 @@ generated/
 *.pth
 *.safetensors
 output/
+training_outputs/
 data/

@@ -1,22 +1,43 @@
 # Delivery plan — current state
 
-## Implemented and locally verified
+Status date: 2026-11-22.
 
-- React/FastAPI/SQLite user flows, validation and provider fallbacks.
-- 5,106 source-backed Food.com records with reproducible preparation/import; six distinct fixtures.
-- Frozen pretrained ResNet18 feature extraction + trained five-class head; official test evaluation and confusion matrix.
-- Photo upload, Top-3 predictions, explicit category confirmation/correction and real recipe lookup.
-- Actual Ollama embedding reranking, Qwen structured explanation and MPS Stable Diffusion generation.
-- SQLite-backed image job state, bounded single-worker execution, polling and queued-job cancellation.
-- Baseline retrieval comparison, provider smoke study and five-category HTTP integration check.
+## Implemented in source
 
-## Remaining limitations / follow-up research
+- React/FastAPI/SQLite application with validation and provider fallbacks.
+- Deterministic recipe recommendation with exclusions, time limits, dataset selection, meal filtering and confirmed five-category search.
+- Optional semantic reranking through Sentence Transformers or Ollama embeddings.
+- Ollama explanation adapter with structured output checks and template fallback.
+- Diffusers generation adapter plus SQLite-backed single-worker image jobs and queued-job cancellation.
+- ResNet18 upload/classification contract and user category confirmation.
+- Up to three ingredient photos with conservative VLM text parsing and user correction.
+- Lifestyle-goal meal planning with explicit non-clinical limitations.
+- Boston.gov events, Census geocoding and reviewed free-food resource aggregation.
+- Reproducible Food.com and five-class Food-101 preparation scripts.
+- Windows download/setup scripts and CNN, retriever, LLM LoRA, VLM LoRA and Diffusion LoRA training entry points.
 
-- Human relevance labels and tuning/evaluation on independently held-out user queries. Current semantic blend did not beat keyword baseline on synthetic reconstruction queries.
-- Human validation of category-to-recipe mapping; broader data coverage and cuisine/ingredient normalization.
-- Unknown-food rejection and calibrated probabilities; expansion beyond five supported classes requires separate training/evaluation.
-- Independent LLM factuality and Diffusion image-quality evaluation; outputs can still add unsupported content.
-- Image-job deadlines, retention cleanup, running-inference interruption and multi-process coordination; production hosting and dependency vulnerability remediation.
-- Team ownership, original course rubric and explicit TA confirmation of topic counting and AI-use permission; final team report/demo/submission archive.
+## Verified now
 
-See course-requirements.zh.md for the distinction between working technical modules and confirmed classroom compliance.
+- `D:\CondaEnvs\myenv` uses Python 3.14.7 and CUDA-enabled PyTorch on an RTX 4080 Laptop GPU.
+- Required training libraries import successfully.
+- The backend suite passes 46 tests.
+- Training Python files compile and their CLI parsers load.
+- PowerShell training scripts parse successfully.
+- The official Diffusers LoRA example loads from the environment.
+
+## Present only as historical evidence
+
+Committed evaluation reports describe a previous provisioned environment with 5,106 imported Food.com recipes, a trained five-class CNN and local Ollama/Diffusion smoke tests. The current checkout does not contain those raw datasets, the runtime recipe database, generated images or CNN checkpoint. Historical results must not be described as a current Windows reproduction.
+
+## Remaining work
+
+1. Download and checksum Food.com and Food-101 into the documented paths.
+2. Run preparation/import and verify the real recipe count in `/api/health`.
+3. Re-run the five-class CNN on the Windows CUDA environment and save the checkpoint and fresh metrics.
+4. Construct, review and split task-specific retriever, LLM and VLM training datasets.
+5. Select licensed base models, train adapters, evaluate held-out quality and document conversion into the runtime format.
+6. Add independent human relevance, factuality and image-quality evaluation.
+7. Configure a complete demo `.env` without committing local paths or credentials.
+8. Validate frontend production build and perform a full browser/API demo on the final machine.
+9. Decide retention, timeout and multi-process behavior for image jobs before production use.
+10. Complete team ownership, final report, presentation and course-permission review.

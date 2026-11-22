@@ -4,9 +4,15 @@ Select head checkpoint on validation only; evaluate official test exactly once.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import random
+import sys
 import time
+
+os.environ.setdefault("HF_HOME", str(Path(sys.prefix) / "cache/huggingface"))
+os.environ.setdefault("TORCH_HOME", str(Path(sys.prefix) / "cache/torch"))
+
 import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
@@ -40,7 +46,7 @@ def metrics(logits,targets,labels):
 
 def train(epochs,batch_size):
     started=time.monotonic();random.seed(42);torch.manual_seed(42);torch.set_num_threads(4)
-    device='mps' if torch.backends.mps.is_available() else 'cpu'
+    device='cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
     labels=json.loads((ROOT/'data/processed/food101/labels.json').read_text())
     weights=ResNet18_Weights.DEFAULT
     model=resnet18(weights=weights)

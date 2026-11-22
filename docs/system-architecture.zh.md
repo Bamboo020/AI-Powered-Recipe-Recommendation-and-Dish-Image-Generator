@@ -1,55 +1,63 @@
-# 整体架构
+# 当前系统架构
 
-采用模块化单体架构：一个 React 前端、一个 FastAPI 后端、本地 SQLite 和可替换的 AI 模型适配器。当前无需微服务或向量数据库。
+状态日期：2026-11-22。
+
+项目采用模块化单体架构：React/Vite 前端、FastAPI 后端、本地 SQLite、可选 AI 适配器和少量公开信息源。当前不需要微服务或向量数据库。
 
 ```mermaid
 flowchart TD
-    User[用户：食材、时间、菜系、忌口] --> UI[React / Vite 页面]
-    UI --> API[FastAPI：校验、归一化、服务编排]
-    API --> DB[(SQLite 食谱库)]
-    DB --> Filter[硬过滤：时间、禁用食材、至少一个食材匹配]
-    Filter --> Embed[编码器 Transformer：Ollama nomic-embed-text]
-    Embed --> Rank[规则特征 + 余弦相似度排序]
-    Rank --> Top[Top-3：来源、缺失食材、原始步骤]
-    Top --> UI
-    UI --> Select[用户选定一道食谱]
-    Select --> LLM[Ollama Qwen2.5 7B：基于食谱生成说明]
-    Select --> SD[Diffusers Stable Diffusion 1.5：菜品概念图]
-    LLM --> UI
-    SD --> PNG[本地 PNG 文件 + AI 生成标识]
-    PNG --> UI
-    Photo[图片上传 API] --> CNN[ResNet18：Top-3 菜品类别]
-    CNN --> Confirm[用户确认类别后检索食谱]
+    User[用户] --> UI[React / Vite]
+    UI --> API[FastAPI]
+    API --> DB[(SQLite 食谱与任务状态)]
+    DB --> Rules[时间/忌口/类别/食材硬过滤]
+    Rules --> Semantic[可选向量重排]
+    Semantic --> Recipes[食谱结果]
+
+    API --> Plan[餐食目标与空闲时间规划]
+    API --> Events[Boston.gov 活动]
+    Events --> Census[美国 Census 地理编码]
+    API --> Food[审核过的免费食物资源]
+
+    API --> LLM[可选 Ollama 说明]
+    API --> SD[可选 Diffusers 图片]
+    API --> CNN[可选 ResNet18 菜品分类]
+    API --> VLM[可选 Ollama 食材识别]
+    CNN --> Confirm[用户确认/纠正]
+    VLM --> Confirm
 ```
 
 ## 模块分工
 
-| 模块 | 责任 | 当前实现 |
+| 模块 | 责任 | 当前状态 |
 | --- | --- | --- |
-| React | 收集条件、展示结果、说明和生成图片 | 已实现照片上传、Top-3 与手动确认 |
-| FastAPI | 输入校验、错误处理、串联数据与 AI | 已实现 |
-| SQLite | 保存食谱、食材、步骤、来源 | 5,106 条真实食谱 + 六条单独标记样例 |
-| 推荐服务 | 时间与忌口硬过滤、食材覆盖率与语义排序 | 已实现；语义失败回退规则 |
-| 编码器 Transformer | 将查询和候选转换为向量 | 本机使用已有 nomic-embed-text |
-| LLM | 解释选定食谱，不替换原始数据 | 本机使用已有 Qwen2.5 7B |
-| Diffusion | 根据选定食谱生成独立概念图 | 本机复用 SD 1.5 缓存、MPS |
-| CNN | 图片类别预测，用户确认后再检索 | 五类分类头已训练；官方测试 1,250 张，Top-1 91.60% |
+| React | 搜索、照片确认、餐食计划、活动和食物资源展示 | 源码已实现 |
+| FastAPI | 校验、编排、回退、外部信息访问 | 源码已实现 |
+| SQLite | 食谱与图片任务状态 | 当前文件不存在，启动时创建 |
+| 推荐服务 | 硬过滤、规则排序、可选语义重排 | 已实现 |
+| 餐食计划 | 目标、已有食材、空闲时间和季节提示 | 已实现；属于启发式，不是医疗建议 |
+| 公共信息 | Boston.gov RSS、Census 坐标、审核资源登记表 | 已实现；实时刷新依赖网络 |
+| 编码器 | 查询和候选向量化 | 适配器存在，当前未配置模型 |
+| LLM | 对选定食谱生成受约束说明 | 适配器存在，当前未配置 Ollama |
+| Diffusion | 生成独立且标记为 AI 的概念图 | 适配器存在，当前未配置基础模型 |
+| CNN | 五类菜品预测 | 标签存在，checkpoint 缺失 |
+| VLM | 图片中的可见食材建议 | 适配器存在，当前未配置模型 |
 
-推荐链路不等待 LLM 或图像生成。它们在用户选定食谱后分别触发。语义服务失败时回退规则；LLM 失败时返回模板；生成失败保留原始食谱。
+## 数据流与边界
 
-## 数据与模型边界
+食谱记录是食材、步骤、时间和来源的权威数据。向量模型只对规则筛选后的候选进行重排；LLM 只能生成补充说明；Diffusion 图片是概念图；CNN 只预测五个菜品类别；VLM 输出必须由用户确认。
 
-食谱库是步骤和食材的来源；向量模型只参与候选排序；LLM 文字需标注为生成说明；Diffusion 图片是概念图。CNN 分类不等于识别完整食材清单。当前语义层是过滤后重排，尚未实现全库向量召回。
+排除食材使用有限的字符串和家族规则，不能保证过敏安全。餐食目标分数、季节提示和运动文字是透明的一般性启发式，不计算临床营养需求或运动热量。Boston 资源只表示发布来源和时间表，不表示实时库存、开放状态或食品安全。
 
-CNN、编码器 Transformer、LLM、Diffusion 对应四个模型模块；课程如何计入主题需以课程认定为准。没有自行训练或评估结果，不能宣称模型准确率。
+## 当前运行状态
 
-## 本地运行
+当前项目目录没有真实数据文件、运行数据库、`.env` 或 CNN checkpoint。启动后会建立 SQLite 并写入六条明确标记的 demo 食谱。因此：
 
-1. `ollama serve` 启动本地模型服务（若已有服务则复用）。
-2. 根目录 `.env` 配置模型与本机缓存路径；文件不会提交 Git。
-3. `sh scripts/start-backend.sh` 启动后端，读取 `.env`。
-4. 在 `frontend` 中运行 `npm run dev`，打开 http://127.0.0.1:5173。
+- 基础 UI、API 和确定性推荐可以演示。
+- 真实食谱搜索和真实数据餐食计划需要先导入 Food.com。
+- AI 功能需要在 `.env` 中配置实际模型或服务。
+- CNN 必须先生成/取得与标签匹配的可信 checkpoint。
+- 历史评估文件不能视为当前 Windows 环境已经复现。
 
-配置及限制详见 [AI 架构](ai-architecture.md)。图像生成目前为同步请求，不具备持久化任务队列和取消机制；在本机按需触发单张生成。
+## 本机环境
 
-五类训练/评估与数据来源见 [评估报告](../evaluation/REPORT.zh.md) 和 [数据说明](../data_metadata/README.md)。类别到食谱是标题/来源分类启发式，不是数据集逐条配对。当前语义混合在合成重建查询上弱于关键词基线，尚未证明提升用户相关性。
+训练和可选推理依赖已安装在 `D:\CondaEnvs\myenv`。RTX 4080 Laptop GPU 和 CUDA 已被 PyTorch 检测。数据集下载、处理和训练步骤见 `windows-training.zh.md`；基础启动方式见 `local-setup.zh.md`。

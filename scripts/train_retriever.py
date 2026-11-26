@@ -46,7 +46,7 @@ def read_rows(path: Path) -> Dataset:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", type=Path, default=ROOT / "data/training/retriever/train.jsonl")
-    parser.add_argument("--model", default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
     parser.add_argument("--output", type=Path, default=ROOT / "training_outputs/retriever")
     parser.add_argument("--epochs", type=float, default=2)
     parser.add_argument("--batch-size", type=int, default=16)

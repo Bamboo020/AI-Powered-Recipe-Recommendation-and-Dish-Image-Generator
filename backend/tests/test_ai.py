@@ -43,6 +43,41 @@ def test_semantic_load_failure_falls_back(monkeypatch):
     assert services.semantic_scores('egg',[{'title':'test','ingredient_items':[], 'cuisine_tags':[]}]) is None
 
 
+def test_openai_explanation_and_grounding_fallback(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-test-key")
+    assert services.configured_services()["llm"] == "configured_unverified"
+    monkeypatch.setenv("OLLAMA_MODEL", "local-model")
+    model_recipe_id = "demo-001"
+
+    def complete(url, *, headers, json, timeout):
+        assert url == "https://api.openai.com/v1/chat/completions"
+        assert headers["Authorization"] == "Bearer fake-test-key"
+        assert json["model"] == "gpt-4o-mini"
+        assert json["store"] is False
+        assert "demo-001" in json["messages"][1]["content"]
+        json_schema = json["response_format"]["json_schema"]
+        assert json_schema["strict"] is True
+        assert json_schema["schema"]["properties"]["recipe_id"]["enum"] == ["demo-001"]
+        content = f'{{"recipe_id":"{model_recipe_id}","explanation":"A short recipe explanation."}}'
+        return httpx.Response(
+            200,
+            json={"choices": [{"message": {"content": content}}]},
+            request=httpx.Request("POST", url),
+        )
+
+    monkeypatch.setattr(services.httpx, "post", complete)
+    with TestClient(main.app) as client:
+        result = client.post("/api/explain", json={"recipe_id": "demo-001"}).json()
+        assert result["provider"] == "openai"
+        assert result["is_llm_generated"] is True
+        assert result["source_recipe_id"] == "demo-001"
+
+        model_recipe_id = "different-recipe"
+        fallback = client.post("/api/explain", json={"recipe_id": "demo-001"}).json()
+        assert fallback["provider"] == "template"
+        assert fallback["is_llm_generated"] is False
+
+
 def test_image_generation_saves_asset(monkeypatch,tmp_path):
     monkeypatch.setenv('DIFFUSION_MODEL','test')
     class Image:
@@ -80,11 +115,11 @@ def test_ollama_embeddings_are_used_and_cached(monkeypatch):
     services.ollama_document_embeddings.cache_clear()
 
 
-def test_non_english_llm_output_falls_back(monkeypatch):
+def test_non_latin_llm_output_falls_back(monkeypatch):
     monkeypatch.setenv('OLLAMA_MODEL', 'test-model')
     def unexpected_language(url, **kwargs):
         assert 'English paragraph' in kwargs['json']['messages'][0]['content']
-        return httpx.Response(200, json={'message': {'content': '{"recipe_id":"demo-001","explanation":"这是中文说明"}'}}, request=httpx.Request('POST', url))
+        return httpx.Response(200, json={'message': {'content': '{"recipe_id":"demo-001","explanation":"\u03b1\u03b2\u03b3"}'}}, request=httpx.Request('POST', url))
     monkeypatch.setattr(services.httpx, 'post', unexpected_language)
     with TestClient(main.app) as client:
         data = client.post('/api/explain', json={'recipe_id': 'demo-001'}).json()

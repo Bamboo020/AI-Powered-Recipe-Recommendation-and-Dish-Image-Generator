@@ -4,7 +4,7 @@ from app.main import app
 
 def test_recommendation_contract():
     with TestClient(app) as client:
-        response = client.post("/api/recommend", json={"ingredients": ["鸡蛋", "番茄", "熟米饭"], "max_cooking_time": 30, "cuisine": "中式家常"})
+        response = client.post("/api/recommend", json={"ingredients": ["eggs", "tomatoes", "cooked rice"], "max_cooking_time": 30, "cuisine": "Chinese"})
         assert response.status_code == 200
         data = response.json()
         assert len(data["recommendations"]) == 3
@@ -19,14 +19,14 @@ def test_recommendation_contract():
 
 def test_exclusions_are_hard_constraints():
     with TestClient(app) as client:
-        data = client.post("/api/recommend", json={"ingredients": ["tomatoes", "eggs"], "excluded_ingredients": ["鸡蛋"], "top_k": 10}).json()
+        data = client.post("/api/recommend", json={"ingredients": ["tomatoes", "eggs"], "excluded_ingredients": ["egg"], "top_k": 10}).json()
         assert data["recommendations"]
         assert all("egg" not in [x["name"] for x in r["ingredient_items"]] for r in data["recommendations"])
 
 
 def test_raw_rice_does_not_match_cooked_rice():
     with TestClient(app) as client:
-        data = client.post("/api/recommend", json={"ingredients": ["生米"]}).json()
+        data = client.post("/api/recommend", json={"ingredients": ["raw rice"]}).json()
         assert data["recommendations"] == []
 
 

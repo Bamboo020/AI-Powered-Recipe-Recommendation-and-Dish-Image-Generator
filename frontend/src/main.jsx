@@ -8,7 +8,7 @@ import MealPlanner from './MealPlanner';
 const names = {egg:'Egg',tomato:'Tomato',cooked_rice:'Cooked rice',raw_rice:'Uncooked rice',rice_unspecified:'Rice (cooking state unspecified)',oil:'Oil',salt:'Salt',scallion:'Scallion',soy_sauce:'Soy sauce',tofu:'Tofu',garlic:'Garlic',noodles:'Noodles',potato:'Potato',onion:'Onion',chicken:'Chicken',olive_oil:'Olive oil'};
 const dishNames = {fried_rice:'Fried rice',omelette:'Omelette',pizza:'Pizza',ramen:'Ramen',dumplings:'Dumplings'};
 const label = x => names[x] || x.replaceAll('_', ' ');
-const split = value => value.split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);
+const split = value => value.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);
 async function api(path, body) {
   const response = await fetch('/api/'+path, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   let data;

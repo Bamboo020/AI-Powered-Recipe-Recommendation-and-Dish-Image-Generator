@@ -92,7 +92,7 @@ def identify_ingredients(images):
             try:
                 response=httpx.post(os.getenv('OLLAMA_BASE_URL','http://127.0.0.1:11434').rstrip('/')+'/api/chat',json={
                     'model':model,'stream':False,'keep_alive':'0s',
-                    'messages':[{'role':'user','content':'Name only the foods that are visible in this image.','images':[encoded]}],
+                    'messages':[{'role':'user','content':'In English, name only the foods that are visible in this image.','images':[encoded]}],
                     'options':{'temperature':0,'num_predict':180}},timeout=httpx.Timeout(90,connect=5))
                 response.raise_for_status()
                 description=response.json()['message']['content']

@@ -3,7 +3,7 @@ from app import main
 
 
 def test_confirmed_category_search_and_dataset_filter(monkeypatch):
-    records=[{'recipe_id':'foodcom-1','title':'Chicken Fried Rice','ingredient_items':[{'name':'egg'}],'total_minutes':15,'cuisine_tags':[],'steps':['Cook.'],'source':'test','servings':2}, {'recipe_id':'demo-1','title':'炒饭','ingredient_items':[{'name':'egg'}],'total_minutes':15,'cuisine_tags':[],'steps':['Cook.'],'source':'fixture','servings':2}]
+    records=[{'recipe_id':'foodcom-1','title':'Chicken Fried Rice','ingredient_items':[{'name':'egg'}],'total_minutes':15,'cuisine_tags':[],'steps':['Cook.'],'source':'test','servings':2}, {'recipe_id':'demo-1','title':'Vegetable Fried Rice','ingredient_items':[{'name':'egg'}],'total_minutes':15,'cuisine_tags':[],'steps':['Cook.'],'source':'fixture','servings':2}]
     monkeypatch.setattr(main,'read_recipes',lambda:records)
     monkeypatch.setattr(main,'semantic_scores',lambda q,r:None)
     with TestClient(main.app) as client:

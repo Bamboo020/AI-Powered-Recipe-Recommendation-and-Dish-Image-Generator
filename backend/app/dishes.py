@@ -12,7 +12,7 @@ def is_meal_candidate(recipe):
 
 
 DISH_PATTERNS={
-    'fried_rice':r'\bfried rice\b|炒饭',
+    'fried_rice':r'\bfried rice\b',
     'omelette':r'\bomelette?s?\b|\bomelets?\b',
     'pizza':r'\bpizzas?\b',
     'ramen':r'\bramen\b',

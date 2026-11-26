@@ -22,17 +22,12 @@ ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 DB_PATH = Path(os.getenv("RECIPE_DB_PATH", str(ROOT / "recipes.sqlite3")))
 ALIASES = {
-    "eggs": "egg", "鸡蛋": "egg", "番茄": "tomato", "西红柿": "tomato",
-    "tomatoes": "tomato", "熟米饭": "cooked_rice", "米饭": "cooked_rice",
-    "cooked rice": "cooked_rice", "raw rice": "raw_rice", "uncooked rice": "raw_rice", "rice": "raw_rice", "生米": "raw_rice",
-    "大米": "raw_rice", "鸡肉": "chicken", "土豆": "potato", "potatoes": "potato",
-    "洋葱": "onion", "大蒜": "garlic", "面条": "noodles", "豆腐": "tofu",
-    "酱油": "soy_sauce", "soy sauce": "soy_sauce", "葱": "scallion",
-    "橄榄油": "olive_oil", "olive oil": "olive_oil", "油": "oil", "盐": "salt",
+    "eggs": "egg", "tomatoes": "tomato", "potatoes": "potato",
+    "cooked rice": "cooked_rice", "raw rice": "raw_rice", "uncooked rice": "raw_rice", "rice": "raw_rice",
+    "soy sauce": "soy_sauce", "olive oil": "olive_oil",
     "peanuts": "peanut", "peanut butter": "peanut_butter",
     "almonds": "almond", "walnuts": "walnut", "cashews": "cashew",
-    "中式家常": "chinese_home_style", "chinese": "chinese_home_style",
-    "意式": "italian", "不限": "any",
+    "chinese": "chinese_home_style",
 }
 
 def normalize(value: str) -> str:
@@ -188,8 +183,8 @@ def meal_plan(request: PlanRequest):
 def explain(request: SelectedRecipe):
     recipe = find_recipe(request.recipe_id)
     try:
-        text = explain_recipe(recipe)
-        return {"recipe_id": recipe["recipe_id"], "provider": "ollama", "status": "completed", "is_llm_generated": True, "text": text, "source": recipe["source"], "source_recipe_id": recipe["recipe_id"]}
+        text, provider = explain_recipe(recipe)
+        return {"recipe_id": recipe["recipe_id"], "provider": provider, "status": "completed", "is_llm_generated": True, "text": text, "source": recipe["source"], "source_recipe_id": recipe["recipe_id"]}
     except AIUnavailable:
         return {"recipe_id": recipe["recipe_id"], "provider": "template", "status": "fallback", "is_llm_generated": False, "text": f"{recipe['title']} takes {recipe['total_minutes']} minutes and serves {recipe['servings']}. Review the original ingredients and steps. LLM unavailable.", "source": recipe["source"]}
 

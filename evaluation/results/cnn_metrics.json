@@ -1,0 +1,566 @@
+{
+  "model": "ResNet18 ImageNet pretrained backbone + trained linear head",
+  "training_scope": "backbone frozen; only 512-to-5 classifier head trained",
+  "device_for_feature_extraction": "mps",
+  "seed": 42,
+  "epochs": 60,
+  "selection": "highest validation macro F1; no test-based tuning",
+  "classes": [
+    "dumplings",
+    "fried_rice",
+    "omelette",
+    "pizza",
+    "ramen"
+  ],
+  "train_count": 3000,
+  "validation": {
+    "top1_accuracy": 0.909333348274231,
+    "top3_accuracy": 0.981333315372467,
+    "macro_f1": 0.9093540127374713,
+    "confusion_matrix": [
+      [
+        136,
+        2,
+        7,
+        1,
+        4
+      ],
+      [
+        3,
+        134,
+        8,
+        2,
+        3
+      ],
+      [
+        5,
+        3,
+        130,
+        7,
+        5
+      ],
+      [
+        2,
+        3,
+        7,
+        137,
+        1
+      ],
+      [
+        1,
+        2,
+        2,
+        0,
+        145
+      ]
+    ],
+    "per_class": [
+      {
+        "class": "dumplings",
+        "precision": 0.9251700680272109,
+        "recall": 0.9066666666666666,
+        "f1": 0.9158249158249158,
+        "support": 150
+      },
+      {
+        "class": "fried_rice",
+        "precision": 0.9305555555555556,
+        "recall": 0.8933333333333333,
+        "f1": 0.9115646258503401,
+        "support": 150
+      },
+      {
+        "class": "omelette",
+        "precision": 0.8441558441558441,
+        "recall": 0.8666666666666667,
+        "f1": 0.8552631578947368,
+        "support": 150
+      },
+      {
+        "class": "pizza",
+        "precision": 0.9319727891156463,
+        "recall": 0.9133333333333333,
+        "f1": 0.9225589225589225,
+        "support": 150
+      },
+      {
+        "class": "ramen",
+        "precision": 0.9177215189873418,
+        "recall": 0.9666666666666667,
+        "f1": 0.9415584415584415,
+        "support": 150
+      }
+    ],
+    "count": 750
+  },
+  "test": {
+    "top1_accuracy": 0.9160000085830688,
+    "top3_accuracy": 0.9896000027656555,
+    "macro_f1": 0.916500052712488,
+    "confusion_matrix": [
+      [
+        239,
+        1,
+        7,
+        0,
+        3
+      ],
+      [
+        3,
+        219,
+        23,
+        2,
+        3
+      ],
+      [
+        4,
+        7,
+        223,
+        11,
+        5
+      ],
+      [
+        0,
+        1,
+        16,
+        231,
+        2
+      ],
+      [
+        8,
+        4,
+        3,
+        2,
+        233
+      ]
+    ],
+    "per_class": [
+      {
+        "class": "dumplings",
+        "precision": 0.9409448818897638,
+        "recall": 0.956,
+        "f1": 0.9484126984126984,
+        "support": 250
+      },
+      {
+        "class": "fried_rice",
+        "precision": 0.9439655172413793,
+        "recall": 0.876,
+        "f1": 0.9087136929460581,
+        "support": 250
+      },
+      {
+        "class": "omelette",
+        "precision": 0.8198529411764706,
+        "recall": 0.892,
+        "f1": 0.8544061302681992,
+        "support": 250
+      },
+      {
+        "class": "pizza",
+        "precision": 0.9390243902439024,
+        "recall": 0.924,
+        "f1": 0.9314516129032259,
+        "support": 250
+      },
+      {
+        "class": "ramen",
+        "precision": 0.9471544715447154,
+        "recall": 0.932,
+        "f1": 0.9395161290322581,
+        "support": 250
+      }
+    ],
+    "count": 1250
+  },
+  "majority_baseline_accuracy": 0.2,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.8027588661511739,
+      "validation_accuracy": 0.8560000061988831,
+      "validation_macro_f1": 0.8537962470625402
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.37732505544026695,
+      "validation_accuracy": 0.8826666474342346,
+      "validation_macro_f1": 0.8819507014954372
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3172459225654602,
+      "validation_accuracy": 0.8840000033378601,
+      "validation_macro_f1": 0.8836848583234325
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.28630269130071007,
+      "validation_accuracy": 0.8826666474342346,
+      "validation_macro_f1": 0.8814121668982755
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.2624938168128331,
+      "validation_accuracy": 0.8973333239555359,
+      "validation_macro_f1": 0.8971082336376333
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.245465591609478,
+      "validation_accuracy": 0.8960000276565552,
+      "validation_macro_f1": 0.895307305629089
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.23464433765411377,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8986977924866256
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.22191998759905499,
+      "validation_accuracy": 0.8999999761581421,
+      "validation_macro_f1": 0.8998478451580159
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.21179429682095846,
+      "validation_accuracy": 0.8946666717529297,
+      "validation_macro_f1": 0.8939107190333869
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.20126676750183106,
+      "validation_accuracy": 0.9039999842643738,
+      "validation_macro_f1": 0.9041203275315122
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.20881244353453318,
+      "validation_accuracy": 0.9013333320617676,
+      "validation_macro_f1": 0.9020398002363865
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.1907779241402944,
+      "validation_accuracy": 0.9053333401679993,
+      "validation_macro_f1": 0.905438910402325
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.18980214107036592,
+      "validation_accuracy": 0.9026666879653931,
+      "validation_macro_f1": 0.9025205107647402
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.17766342763106027,
+      "validation_accuracy": 0.9013333320617676,
+      "validation_macro_f1": 0.9008121150574094
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.17070458741982777,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8978488288438944
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.16299789559841155,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8981186629601275
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.15700862540801366,
+      "validation_accuracy": 0.9026666879653931,
+      "validation_macro_f1": 0.902610276328933
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.1590730190674464,
+      "validation_accuracy": 0.8880000114440918,
+      "validation_macro_f1": 0.8865193001076289
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.15715553724765777,
+      "validation_accuracy": 0.8960000276565552,
+      "validation_macro_f1": 0.8947191542261044
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.147849376142025,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8981348639690736
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.1427239070336024,
+      "validation_accuracy": 0.9066666960716248,
+      "validation_macro_f1": 0.9065681556976001
+    },
+    {
+      "epoch": 22,
+      "train_loss": 0.13833601472775142,
+      "validation_accuracy": 0.8960000276565552,
+      "validation_macro_f1": 0.895684914905754
+    },
+    {
+      "epoch": 23,
+      "train_loss": 0.13292254006862642,
+      "validation_accuracy": 0.9053333401679993,
+      "validation_macro_f1": 0.9050369908938629
+    },
+    {
+      "epoch": 24,
+      "train_loss": 0.13287578825155894,
+      "validation_accuracy": 0.8973333239555359,
+      "validation_macro_f1": 0.8970305512597136
+    },
+    {
+      "epoch": 25,
+      "train_loss": 0.1319632679025332,
+      "validation_accuracy": 0.9053333401679993,
+      "validation_macro_f1": 0.9051769715894512
+    },
+    {
+      "epoch": 26,
+      "train_loss": 0.12474122802416483,
+      "validation_accuracy": 0.9066666960716248,
+      "validation_macro_f1": 0.9064081736527256
+    },
+    {
+      "epoch": 27,
+      "train_loss": 0.12768441727757454,
+      "validation_accuracy": 0.9039999842643738,
+      "validation_macro_f1": 0.9039229186341465
+    },
+    {
+      "epoch": 28,
+      "train_loss": 0.11998777681589126,
+      "validation_accuracy": 0.8920000195503235,
+      "validation_macro_f1": 0.8907888109306368
+    },
+    {
+      "epoch": 29,
+      "train_loss": 0.12533993468681973,
+      "validation_accuracy": 0.8946666717529297,
+      "validation_macro_f1": 0.8938530158104753
+    },
+    {
+      "epoch": 30,
+      "train_loss": 0.1138822209239006,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8983675142880146
+    },
+    {
+      "epoch": 31,
+      "train_loss": 0.11374120279153188,
+      "validation_accuracy": 0.9079999923706055,
+      "validation_macro_f1": 0.9078487276340728
+    },
+    {
+      "epoch": 32,
+      "train_loss": 0.1157289155125618,
+      "validation_accuracy": 0.9013333320617676,
+      "validation_macro_f1": 0.9013717005505878
+    },
+    {
+      "epoch": 33,
+      "train_loss": 0.1096665478348732,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8986060597365922
+    },
+    {
+      "epoch": 34,
+      "train_loss": 0.10804930643240611,
+      "validation_accuracy": 0.909333348274231,
+      "validation_macro_f1": 0.9093540127374713
+    },
+    {
+      "epoch": 35,
+      "train_loss": 0.10725996526082357,
+      "validation_accuracy": 0.9026666879653931,
+      "validation_macro_f1": 0.902426050803931
+    },
+    {
+      "epoch": 36,
+      "train_loss": 0.10731982950369517,
+      "validation_accuracy": 0.8920000195503235,
+      "validation_macro_f1": 0.8919264016078066
+    },
+    {
+      "epoch": 37,
+      "train_loss": 0.106046622077624,
+      "validation_accuracy": 0.9053333401679993,
+      "validation_macro_f1": 0.9048802270666723
+    },
+    {
+      "epoch": 38,
+      "train_loss": 0.1016509582400322,
+      "validation_accuracy": 0.8893333077430725,
+      "validation_macro_f1": 0.8886628687683924
+    },
+    {
+      "epoch": 39,
+      "train_loss": 0.09716069833437602,
+      "validation_accuracy": 0.8999999761581421,
+      "validation_macro_f1": 0.8996009641091133
+    },
+    {
+      "epoch": 40,
+      "train_loss": 0.09378638764222463,
+      "validation_accuracy": 0.9053333401679993,
+      "validation_macro_f1": 0.9050896526001878
+    },
+    {
+      "epoch": 41,
+      "train_loss": 0.09217205947637558,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8984923222322397
+    },
+    {
+      "epoch": 42,
+      "train_loss": 0.09792029476165771,
+      "validation_accuracy": 0.9026666879653931,
+      "validation_macro_f1": 0.9024879348962079
+    },
+    {
+      "epoch": 43,
+      "train_loss": 0.09663839492201805,
+      "validation_accuracy": 0.9013333320617676,
+      "validation_macro_f1": 0.9012394690786492
+    },
+    {
+      "epoch": 44,
+      "train_loss": 0.09159652270873388,
+      "validation_accuracy": 0.8946666717529297,
+      "validation_macro_f1": 0.8939748547315691
+    },
+    {
+      "epoch": 45,
+      "train_loss": 0.09816419603427251,
+      "validation_accuracy": 0.8920000195503235,
+      "validation_macro_f1": 0.891055455346818
+    },
+    {
+      "epoch": 46,
+      "train_loss": 0.08546187382936478,
+      "validation_accuracy": 0.8866666555404663,
+      "validation_macro_f1": 0.8860236084829023
+    },
+    {
+      "epoch": 47,
+      "train_loss": 0.08477520694335301,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.8985815230810076
+    },
+    {
+      "epoch": 48,
+      "train_loss": 0.0823719686071078,
+      "validation_accuracy": 0.8893333077430725,
+      "validation_macro_f1": 0.8889366654472178
+    },
+    {
+      "epoch": 49,
+      "train_loss": 0.0811940589149793,
+      "validation_accuracy": 0.8946666717529297,
+      "validation_macro_f1": 0.8940205688758109
+    },
+    {
+      "epoch": 50,
+      "train_loss": 0.077088726212581,
+      "validation_accuracy": 0.8933333158493042,
+      "validation_macro_f1": 0.892849393250553
+    },
+    {
+      "epoch": 51,
+      "train_loss": 0.07582976611455282,
+      "validation_accuracy": 0.8893333077430725,
+      "validation_macro_f1": 0.8886819032797245
+    },
+    {
+      "epoch": 52,
+      "train_loss": 0.07648137519756953,
+      "validation_accuracy": 0.8946666717529297,
+      "validation_macro_f1": 0.893930773981919
+    },
+    {
+      "epoch": 53,
+      "train_loss": 0.07761540180444718,
+      "validation_accuracy": 0.8973333239555359,
+      "validation_macro_f1": 0.8967191503131635
+    },
+    {
+      "epoch": 54,
+      "train_loss": 0.0822136484781901,
+      "validation_accuracy": 0.8880000114440918,
+      "validation_macro_f1": 0.8872485930301363
+    },
+    {
+      "epoch": 55,
+      "train_loss": 0.07890845756729443,
+      "validation_accuracy": 0.8986666798591614,
+      "validation_macro_f1": 0.89834962361878
+    },
+    {
+      "epoch": 56,
+      "train_loss": 0.07372430485486985,
+      "validation_accuracy": 0.8933333158493042,
+      "validation_macro_f1": 0.8927754331080904
+    },
+    {
+      "epoch": 57,
+      "train_loss": 0.070935105184714,
+      "validation_accuracy": 0.8960000276565552,
+      "validation_macro_f1": 0.8952825626289427
+    },
+    {
+      "epoch": 58,
+      "train_loss": 0.07046673224369684,
+      "validation_accuracy": 0.8893333077430725,
+      "validation_macro_f1": 0.8891577105878745
+    },
+    {
+      "epoch": 59,
+      "train_loss": 0.07412207521994908,
+      "validation_accuracy": 0.8973333239555359,
+      "validation_macro_f1": 0.8970757963987961
+    },
+    {
+      "epoch": 60,
+      "train_loss": 0.0713371599316597,
+      "validation_accuracy": 0.8893333077430725,
+      "validation_macro_f1": 0.8886925528452885
+    }
+  ],
+  "seconds": 36.17,
+  "checkpoint_sha256": "a3dc741a6a63feb91c7d95237f22b02cded6926679aa92c84c61250d9de78194",
+  "data_manifest": {
+    "source": "https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/",
+    "classes": [
+      "dumplings",
+      "fried_rice",
+      "omelette",
+      "pizza",
+      "ramen"
+    ],
+    "counts": {
+      "train": 3000,
+      "validation": 750,
+      "test": 1250
+    },
+    "seed": 42,
+    "split_policy": "600 train / 150 validation from official 750 train per class; all 250 official test per class held out",
+    "extracted_files": 5006,
+    "archive_sha256": "d97d15e438b7f4498f96086a4f7e2fa42a32f2712e87d3295441b2b6314053a4"
+  },
+  "torch_version": "2.15.0",
+  "limitations": [
+    "Supported five classes only; closed-set test excludes unknown dishes",
+    "No calibrated confidence or open-set rejection",
+    "Feature extraction uses fixed ImageNet preprocessing; no end-to-end fine-tuning"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "verification": "Real HTTP ingredient photos \u2192 explicit correction \u2192 real recipe search, plus provider food-resource checks",
+  "vision_model": "llava:7b",
+  "recognition": {
+    "photos": [
+      {
+        "photo_index": 1,
+        "status": "completed",
+        "photo_kind": "ingredients",
+        "ingredients": [
+          {
+            "name": "tomato",
+            "certainty": "uncertain",
+            "state": "unknown"
+          }
+        ]
+      },
+      {
+        "photo_index": 2,
+        "status": "completed",
+        "photo_kind": "ingredients",
+        "ingredients": [
+          {
+            "name": "egg",
+            "certainty": "uncertain",
+            "state": "unknown"
+          },
+          {
+            "name": "tomato",
+            "certainty": "uncertain",
+            "state": "unknown"
+          },
+          {
+            "name": "carrot",
+            "certainty": "uncertain",
+            "state": "unknown"
+          }
+        ]
+      }
+    ],
+    "provider": "ollama",
+    "model": "llava:7b",
+    "requires_confirmation": true,
+    "status": "completed",
+    "notice": "Suggestions may be wrong or incomplete. Confirm ingredient names and cooking state before searching recipes. Photos cannot verify food safety, freshness, hidden allergens or quantities."
+  },
+  "photo_review": [
+    {
+      "photo": "tomatoes.jpg",
+      "expected_visible_ingredients": [
+        "tomato"
+      ],
+      "observed_suggestions": [
+        "tomato"
+      ],
+      "missed": [],
+      "extra": []
+    },
+    {
+      "photo": "vegetables-eggs.jpg",
+      "expected_visible_ingredients": [
+        "carrot",
+        "chili pepper",
+        "egg",
+        "tomato"
+      ],
+      "observed_suggestions": [
+        "carrot",
+        "egg",
+        "tomato"
+      ],
+      "missed": [
+        "chili pepper"
+      ],
+      "extra": []
+    }
+  ],
+  "confirmed_ingredients": [
+    "tomato",
+    "egg",
+    "carrot",
+    "chili pepper"
+  ],
+  "recipe_results": [
+    {
+      "recipe_id": "foodcom-5234",
+      "title": "Akoori - Indian Scrambled Eggs",
+      "total_minutes": 10,
+      "source_url": "https://www.food.com/recipe/5234",
+      "matched": [
+        "egg",
+        "tomato"
+      ],
+      "missing": [
+        "onion",
+        "salt"
+      ]
+    },
+    {
+      "recipe_id": "foodcom-7070",
+      "title": "Zucchini and Tomato Salad",
+      "total_minutes": 10,
+      "source_url": "https://www.food.com/recipe/7070",
+      "matched": [
+        "tomato"
+      ],
+      "missing": [
+        "zucchini"
+      ]
+    },
+    {
+      "recipe_id": "foodcom-9520",
+      "title": "Carrot and Raisin Salad",
+      "total_minutes": 10,
+      "source_url": "https://www.food.com/recipe/9520",
+      "matched": [
+        "carrot"
+      ],
+      "missing": [
+        "raisins"
+      ]
+    }
+  ],
+  "food_resources": {
+    "checked_at": "2026-11-18T02:07:02.357080+00:00",
+    "status": "updated",
+    "program_count": 4,
+    "distinct_addresses": 2,
+    "free_food_event_count": 0,
+    "source_checks": {
+      "Allston Brighton \u00b7 hot meal & groceries": "source_matches_reviewed_details",
+      "Allston-Brighton Community Fridge": "source_matches_reviewed_details",
+      "Allston Brighton \u00b7 grocery pickup": "source_matches_reviewed_details",
+      "Friday Night Supper \u00b7 free prepared dinner": "source_matches_reviewed_details"
+    }
+  },
+  "seconds": 28.99,
+  "limitations": [
+    "These two public photos are development smoke samples, not a held-out accuracy study.",
+    "LLaVA is pretrained; the visible-name mapping is a vocabulary heuristic, not a trained ingredient detector.",
+    "Manual confirmation uses known visible ingredients and includes corrections; it does not measure autonomous recognition accuracy.",
+    "Program source checks do not establish current food stock, exact menu, food safety or holiday service."
+  ]
+}

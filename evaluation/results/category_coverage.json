@@ -1,0 +1,12 @@
+{
+  "selection": "Pinned source IDs in data_metadata/photo_extension_ids.json preserve the original category-coverage sample (0<minutes<=120, <=25 ingredients). Current mapping may exclude some pinned records at recommendation time.",
+  "eligible_extension_counts_current_mapping": {
+    "fried_rice": 19,
+    "omelette": 25,
+    "pizza": 4,
+    "ramen": 28,
+    "dumplings": 19
+  },
+  "new_records": 106,
+  "limitations": "Category mapping is heuristic and not a paired Food101/Food.com annotation."
+}

@@ -1,0 +1,60 @@
+{
+  "llm": {
+    "model": "qwen2.5:7b",
+    "cases": [
+      {
+        "recipe_id": "foodcom-11042",
+        "http_status": 200,
+        "seconds": 9.94,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道简单的中式炒饭，使用了胡萝卜、豌豆和鸡蛋等食材，总共需要4人份的量。"
+      },
+      {
+        "recipe_id": "foodcom-8709",
+        "http_status": 200,
+        "seconds": 10.45,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道快速简便的披萨食谱，适合一人份。使用现成的比萨皮或玉米饼、番茄酱、新鲜蘑菇、罗勒和低脂莫扎里拉奶酪等简单材料，在烤箱中烘烤约7分钟即可完成。"
+      },
+      {
+        "recipe_id": "foodcom-9128",
+        "http_status": 200,
+        "seconds": 9.3,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道以菠菜和酸奶油为主要成分的煎蛋，适合早餐或小吃。原配方未指定分量，可根据个人需求调整鸡蛋数量。"
+      }
+    ],
+    "success_rate": 1.0,
+    "mean_seconds": 9.896666666666667,
+    "limitations": "Three source-grounded calls only. Linkage checks metadata, not factual consistency. Independent human factuality ratings are pending."
+  },
+  "diffusion": {
+    "model": "runwayml/stable-diffusion-v1-5",
+    "cases": [
+      {
+        "sample": "initial_prompt",
+        "recipe_id": "demo-002",
+        "seconds": 90.53,
+        "completed": true,
+        "file": "/generated/2d32288c-0638-4699-b562-ca8f7b03e777.png",
+        "visual_review_by": "coding assistant, not independent human study",
+        "visual_review": "Plated tomato and fried egg, no recognizable fried rice. Dish mismatch."
+      },
+      {
+        "sample": "english_description",
+        "recipe_id": "demo-002",
+        "seconds": 32.55,
+        "completed": true,
+        "file": "/generated/e46152ad-5bd2-49f3-bf87-a21907e5014c.png",
+        "visual_review_by": "coding assistant, not independent human study",
+        "visual_review": "Rice dish recognizable, but fried egg and additional green vegetables differ from the source scrambled-egg recipe. Partial match."
+      }
+    ],
+    "technical_success_rate": 1.0,
+    "mean_seconds": 61.54,
+    "limitations": "Two sequential development images of one illustrative dish; prompt changed after first image. Not an independent or representative quality benchmark. Extra visual ingredients remain."
+  }
+}

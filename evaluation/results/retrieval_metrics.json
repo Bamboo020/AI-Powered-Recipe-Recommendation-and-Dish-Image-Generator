@@ -1,0 +1,582 @@
+{
+  "seed": 2026,
+  "dataset_count": 5000,
+  "query_construction": "20 seeded source recipes; three ingredient names as query, source duration as budget; source recipe is one known positive. Other relevant recipes are unjudged. This is a synthetic reconstruction benchmark, not human relevance evaluation.",
+  "shortlist": "API uses rule preselection up to 128; keyword baseline scores all eligible recipes",
+  "summary": {
+    "keyword_jaccard": {
+      "queries": 20,
+      "known_positive_hit_at_3": 1.0,
+      "known_positive_hit_at_10": 1.0,
+      "known_positive_mrr_at_10": 0.95
+    },
+    "ingredient_rules_v1": {
+      "queries": 20,
+      "known_positive_hit_at_3": 0.65,
+      "known_positive_hit_at_10": 0.75,
+      "known_positive_mrr_at_10": 0.42103174603174603,
+      "mean_seconds": 0.04425727084599203,
+      "time_violations": 0,
+      "semantic_fallbacks": null
+    },
+    "hybrid_semantic_v1": {
+      "queries": 20,
+      "known_positive_hit_at_3": 0.35,
+      "known_positive_hit_at_10": 0.7,
+      "known_positive_mrr_at_10": 0.28075396825396826,
+      "mean_seconds": 2.223064029093075,
+      "time_violations": 0,
+      "semantic_fallbacks": 0
+    }
+  },
+  "queries": [
+    {
+      "ingredients": [
+        "vanilla_ice_cream",
+        "cool_whip",
+        "boiling_water"
+      ],
+      "max_cooking_time": 15,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-10666"
+    },
+    {
+      "ingredients": [
+        "green_onion_stems",
+        "cider_vinegar",
+        "soy_sauce"
+      ],
+      "max_cooking_time": 10,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-3249"
+    },
+    {
+      "ingredients": [
+        "avocado",
+        "mayonnaise",
+        "tuna"
+      ],
+      "max_cooking_time": 10,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-546"
+    },
+    {
+      "ingredients": [
+        "salt",
+        "boneless_beef_top_sirloin_steak",
+        "onions"
+      ],
+      "max_cooking_time": 25,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9742"
+    },
+    {
+      "ingredients": [
+        "frozen_strawberries",
+        "crushed_pineapple",
+        "bananas"
+      ],
+      "max_cooking_time": 25,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-576"
+    },
+    {
+      "ingredients": [
+        "confectioners'_sugar",
+        "pecans",
+        "butter"
+      ],
+      "max_cooking_time": 15,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-7535"
+    },
+    {
+      "ingredients": [
+        "flour",
+        "ghee",
+        "cardamom_seeds"
+      ],
+      "max_cooking_time": 45,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9096"
+    },
+    {
+      "ingredients": [
+        "sugar",
+        "honey",
+        "butter"
+      ],
+      "max_cooking_time": 7,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9751"
+    },
+    {
+      "ingredients": [
+        "rice_unspecified",
+        "fresh_herb",
+        "egg"
+      ],
+      "max_cooking_time": 25,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-1059"
+    },
+    {
+      "ingredients": [
+        "real_maple_syrup",
+        "butter",
+        "raw_honey"
+      ],
+      "max_cooking_time": 35,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9242"
+    },
+    {
+      "ingredients": [
+        "vanilla_extract",
+        "flour",
+        "baking_powder"
+      ],
+      "max_cooking_time": 15,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-1429"
+    },
+    {
+      "ingredients": [
+        "pancetta",
+        "fresh_thyme",
+        "mint_leaves"
+      ],
+      "max_cooking_time": 40,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9304"
+    },
+    {
+      "ingredients": [
+        "sugar",
+        "clove",
+        "cinnamon"
+      ],
+      "max_cooking_time": 10,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-7124"
+    },
+    {
+      "ingredients": [
+        "lemon",
+        "mayonnaise",
+        "onion"
+      ],
+      "max_cooking_time": 30,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-7313"
+    },
+    {
+      "ingredients": [
+        "water",
+        "chicken_drumsticks",
+        "raisins"
+      ],
+      "max_cooking_time": 11,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-6825"
+    },
+    {
+      "ingredients": [
+        "water_chestnuts",
+        "sour_cream",
+        "green_onions"
+      ],
+      "max_cooking_time": 5,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-4393"
+    },
+    {
+      "ingredients": [
+        "mushrooms",
+        "fresh_pineapple",
+        "grand_marnier"
+      ],
+      "max_cooking_time": 22,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-8685"
+    },
+    {
+      "ingredients": [
+        "salt",
+        "hot_water",
+        "vanilla"
+      ],
+      "max_cooking_time": 8,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-6902"
+    },
+    {
+      "ingredients": [
+        "avocado",
+        "sour_cream",
+        "tomato"
+      ],
+      "max_cooking_time": 30,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-672"
+    },
+    {
+      "ingredients": [
+        "ginger_ale",
+        "water",
+        "strawberry_slices"
+      ],
+      "max_cooking_time": 10,
+      "cuisine": "any",
+      "dataset": "real",
+      "top_k": 10,
+      "known_positive_recipe_id": "foodcom-9008"
+    }
+  ],
+  "per_query": {
+    "keyword_jaccard": [
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 2
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 2
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      },
+      {
+        "rank": 1
+      }
+    ],
+    "ingredient_rules_v1": [
+      {
+        "rank": 1,
+        "seconds": 0.08845804198062979,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.0766512080153916,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 1,
+        "seconds": 0.06311241697403602,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 0.08838241698686033,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.08608604199253023,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.07872808299725875,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 9,
+        "seconds": 0.10008133298833854,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 1,
+        "seconds": 0.018878041999414563,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 3,
+        "seconds": 0.018971332989167422,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 0.02159462499548681,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.01893125000060536,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.021160374977625906,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.028132083010859787,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 0.02358916701632552,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 0.02436729200417176,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 1,
+        "seconds": 0.021285499999066815,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 3,
+        "seconds": 0.026589458022499457,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 0.028605250001419336,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 0.026526624977122992,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      },
+      {
+        "rank": 7,
+        "seconds": 0.0250148749910295,
+        "time_violations": 0,
+        "actual_method": "ingredient_rules_v1"
+      }
+    ],
+    "hybrid_semantic_v1": [
+      {
+        "rank": 1,
+        "seconds": 2.1284189589787275,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 4,
+        "seconds": 1.8485502499970607,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 3,
+        "seconds": 2.2411997919844,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 3.375707458006218,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 8,
+        "seconds": 2.0702407920034602,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 3,
+        "seconds": 3.374223165999865,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 2.8457994160125963,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 1,
+        "seconds": 2.350320749974344,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 3,
+        "seconds": 2.33694608299993,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 2.4011981249786913,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 9,
+        "seconds": 2.17054641598952,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 4,
+        "seconds": 1.0233487919904292,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 7,
+        "seconds": 2.5831459159962833,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 2.5307136669871397,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 2.0877793749968987,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 1,
+        "seconds": 1.1090885830053594,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 8,
+        "seconds": 1.178792666993104,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": null,
+        "seconds": 2.4577432079822756,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 9,
+        "seconds": 2.401070958992932,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      },
+      {
+        "rank": 2,
+        "seconds": 1.9464462079922669,
+        "time_violations": 0,
+        "actual_method": "hybrid_semantic_v1"
+      }
+    ]
+  }
+}

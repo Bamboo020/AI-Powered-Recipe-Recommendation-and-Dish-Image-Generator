@@ -1,0 +1,70 @@
+{
+  "sources": [
+    {
+      "url": "https://abfoodpantry.com/services/",
+      "required_phrases": ["hot meal", "free community fridge", "3–6pm"]
+    },
+    {
+      "url": "https://www.fridaynightsupper.org/be-our-guest",
+      "required_phrases": ["free nutritious meal", "5:00pm-7:00pm"]
+    }
+  ],
+  "resources": [
+    {
+      "id": "ab-hot-meal",
+      "title": "Allston Brighton · hot meal & groceries",
+      "resource_type": "meal",
+      "address": "404 Washington Street, Brighton, MA 02135",
+      "source_url": "https://abfoodpantry.com/services/",
+      "food_offer": "Freshly prepared hot takeout meal and a bag of groceries.",
+      "full_meal": true,
+      "eligibility": "Provider welcomes everyone; no proof of need required.",
+      "schedule_note": "Published Wednesday distribution: 3–6 PM. Confirm holiday changes with the provider.",
+      "weekday": 2,
+      "hours": [15, 18],
+      "reviewed_on": "2026-11-17"
+    },
+    {
+      "id": "ab-fridge",
+      "title": "Allston-Brighton Community Fridge",
+      "resource_type": "fridge",
+      "address": "404 Washington Street, Brighton, MA 02135",
+      "source_url": "https://abfoodpantry.com/services/",
+      "food_offer": "Self-service donated food and pantry items. Contents vary; a prepared meal is not guaranteed.",
+      "full_meal": null,
+      "eligibility": "Provider describes self-service access for the community.",
+      "schedule_note": "Provider lists 24/7 access. Stock and fridge operation are not monitored.",
+      "weekday": null,
+      "hours": null,
+      "reviewed_on": "2026-11-17"
+    },
+    {
+      "id": "ab-groceries",
+      "title": "Allston Brighton · grocery pickup",
+      "resource_type": "groceries",
+      "address": "404 Washington Street, Brighton, MA 02135",
+      "source_url": "https://abfoodpantry.com/services/",
+      "food_offer": "Fresh groceries for cooking; pantry baskets also have a separate Saturday schedule.",
+      "full_meal": false,
+      "eligibility": "Provider welcomes everyone; no proof of need required.",
+      "schedule_note": "Wednesday 3–6 PM. Saturday pickup times must be checked with the provider.",
+      "weekday": 2,
+      "hours": [15, 18],
+      "reviewed_on": "2026-11-17"
+    },
+    {
+      "id": "friday-supper",
+      "title": "Friday Night Supper · free prepared dinner",
+      "resource_type": "meal",
+      "address": "351 Boylston Street, Boston, MA 02116",
+      "source_url": "https://www.fridaynightsupper.org/be-our-guest",
+      "food_offer": "Prepared dinner service; soup and drinks are also described. Exact menu changes.",
+      "full_meal": true,
+      "eligibility": "Everyone welcome. Provider says no registration or sign-up is required.",
+      "schedule_note": "Published Friday service: 5–7 PM, lower level of Arlington Street Church. Confirm changes before travel.",
+      "weekday": 4,
+      "hours": [17, 19],
+      "reviewed_on": "2026-11-17"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "verification": "Real local API + Boston.gov RSS + U.S. Census Geocoder",
+  "status": "cached",
+  "fetched_at": "2026-11-18T00:33:42.257741+00:00",
+  "source_url": "https://www.boston.gov/rss/events",
+  "counts": {
+    "feed_items": 25,
+    "unique_events": 18,
+    "skipped_invalid_items": 0,
+    "duplicates_removed": 7
+  },
+  "mapped_events": 2,
+  "online_events": 12,
+  "location_samples": [
+    {
+      "title": "The Future of Construction Technology",
+      "source_url": "https://www.boston.gov/calendar/future-construction-technology",
+      "coordinates": {
+        "latitude": 42.344650127354,
+        "longitude": -71.03159289052,
+        "source": "U.S. Census Geocoder",
+        "accuracy": "Approximate street-range match, not an entrance or route",
+        "matched_address": "23 DRY DOCK AVE, BOSTON, MA, 02210"
+      }
+    },
+    {
+      "title": "Downtown, Chinatown, Leather District Liaison Office Hours",
+      "source_url": "https://www.boston.gov/calendar/downtown-chinatown-leather-district-liaison-office-hours",
+      "coordinates": {
+        "latitude": 42.350388816222,
+        "longitude": -71.05666577458,
+        "source": "U.S. Census Geocoder",
+        "accuracy": "Approximate street-range match, not an entrance or route",
+        "matched_address": "745 ATLANTIC AVE, BOSTON, MA, 02111"
+      }
+    }
+  ],
+  "limitations": [
+    "Snapshot counts change as the source updates.",
+    "Census coordinates are approximate; no exact entrance, route or travel time is verified.",
+    "City-published subset, not all Boston events."
+  ]
+}

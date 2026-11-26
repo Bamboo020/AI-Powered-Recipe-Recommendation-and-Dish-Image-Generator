@@ -1,0 +1,181 @@
+{
+  "health": {
+    "status": "ok",
+    "recipe_count": 5112,
+    "real_recipe_count": 5106,
+    "demo_recipe_count": 6,
+    "dataset": "foodcom_and_labeled_fixtures",
+    "services": {
+      "semantic_encoder": "configured_unverified",
+      "llm": "configured_unverified",
+      "diffusion": "configured_unverified",
+      "cnn": "configured_unverified"
+    },
+    "supported_dish_categories": [
+      "fried_rice",
+      "omelette",
+      "pizza",
+      "ramen",
+      "dumplings"
+    ]
+  },
+  "test_policy": "First official test image by sorted ID for each supported class; class confirmation uses known class, correcting the model if needed. This is a five-case integration check, not the accuracy benchmark.",
+  "cases": [
+    {
+      "image_id": "dumplings/1016850",
+      "path": "data/raw/food101/food-101/images/dumplings/1016850.jpg",
+      "known_class": "dumplings",
+      "predictions": [
+        {
+          "label": "dumplings",
+          "confidence": 0.9999973773956299
+        },
+        {
+          "label": "ramen",
+          "confidence": 1.334743615188927e-06
+        },
+        {
+          "label": "omelette",
+          "confidence": 1.1651959539449308e-06
+        }
+      ],
+      "confirmed_category": "dumplings",
+      "returned_recipe_ids": [
+        "foodcom-81447",
+        "foodcom-56590",
+        "foodcom-56363"
+      ],
+      "returned_titles": [
+        "Pork & Prune Dumplings",
+        "Fried Chicken Dumplings",
+        "Pot Stickers with Chinese Cabbage"
+      ],
+      "seconds": 2.66
+    },
+    {
+      "image_id": "fried_rice/1023430",
+      "path": "data/raw/food101/food-101/images/fried_rice/1023430.jpg",
+      "known_class": "fried_rice",
+      "predictions": [
+        {
+          "label": "fried_rice",
+          "confidence": 0.9990947246551514
+        },
+        {
+          "label": "omelette",
+          "confidence": 0.0007862183265388012
+        },
+        {
+          "label": "ramen",
+          "confidence": 9.974152635550126e-05
+        }
+      ],
+      "confirmed_category": "fried_rice",
+      "returned_recipe_ids": [
+        "foodcom-11042",
+        "foodcom-24774",
+        "foodcom-10669"
+      ],
+      "returned_titles": [
+        "Fried Rice",
+        "Anytime Easy Egg Fried Rice",
+        "Vegetable Fried Rice"
+      ],
+      "seconds": 1.3
+    },
+    {
+      "image_id": "omelette/1019294",
+      "path": "data/raw/food101/food-101/images/omelette/1019294.jpg",
+      "known_class": "omelette",
+      "predictions": [
+        {
+          "label": "omelette",
+          "confidence": 0.9908273816108704
+        },
+        {
+          "label": "dumplings",
+          "confidence": 0.006011411547660828
+        },
+        {
+          "label": "fried_rice",
+          "confidence": 0.0019985190592706203
+        }
+      ],
+      "confirmed_category": "omelette",
+      "returned_recipe_ids": [
+        "foodcom-14446",
+        "foodcom-17215",
+        "foodcom-19642"
+      ],
+      "returned_titles": [
+        "Mushroom-omelette roll",
+        "Solo Green Chili Cheese Omelette",
+        "Blueberry Omelet"
+      ],
+      "seconds": 1.35
+    },
+    {
+      "image_id": "pizza/1001116",
+      "path": "data/raw/food101/food-101/images/pizza/1001116.jpg",
+      "known_class": "pizza",
+      "predictions": [
+        {
+          "label": "pizza",
+          "confidence": 0.9999516010284424
+        },
+        {
+          "label": "omelette",
+          "confidence": 4.8250203690258786e-05
+        },
+        {
+          "label": "dumplings",
+          "confidence": 1.0046317555634232e-07
+        }
+      ],
+      "confirmed_category": "pizza",
+      "returned_recipe_ids": [
+        "foodcom-8709",
+        "foodcom-10775",
+        "foodcom-4973"
+      ],
+      "returned_titles": [
+        "Ten-Minute Cheater's Pizza",
+        "Mediterranean Vegetable Pizza",
+        "Barbecue Chicken Pizza"
+      ],
+      "seconds": 1.21
+    },
+    {
+      "image_id": "ramen/1000325",
+      "path": "data/raw/food101/food-101/images/ramen/1000325.jpg",
+      "known_class": "ramen",
+      "predictions": [
+        {
+          "label": "ramen",
+          "confidence": 0.9618798494338989
+        },
+        {
+          "label": "omelette",
+          "confidence": 0.03784812241792679
+        },
+        {
+          "label": "pizza",
+          "confidence": 0.00013365130871534348
+        }
+      ],
+      "confirmed_category": "ramen",
+      "returned_recipe_ids": [
+        "foodcom-145560",
+        "foodcom-88037",
+        "foodcom-265542"
+      ],
+      "returned_titles": [
+        "Asian Ramen Noodle Soup",
+        "Ramen Chicken Soup",
+        "Ramen Noodle Egg Drop Soup"
+      ],
+      "seconds": 1.19
+    }
+  ],
+  "completed": 5
+}

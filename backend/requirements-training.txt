@@ -1,0 +1,11 @@
+# Native Windows training dependencies. PyTorch/torchvision are expected to be
+# installed for the machine's CUDA version before this file is installed.
+-r requirements.txt
+-r requirements-ai.txt
+datasets>=3,<5
+evaluate>=0.4,<1
+peft>=0.14,<1
+trl>=0.15,<1
+scikit-learn>=1.6,<2
+tensorboard>=2.18,<3
+ftfy>=6.3,<7

@@ -1,0 +1,285 @@
+[
+  {
+    "recipe_id": "demo-001",
+    "title": "Tomato and Scrambled Eggs",
+    "total_minutes": 15,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 3,
+        "unit": "pieces"
+      },
+      {
+        "name": "tomato",
+        "quantity": 2,
+        "unit": "pieces"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Wash and chop the tomatoes. Beat the eggs.",
+      "Heat the oil, scramble the eggs until set, and set aside.",
+      "Cook the tomatoes until juicy, return the eggs to the pan, season with salt, and cook the eggs through."
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Chinese stir fried tomato chunks mixed with fully cooked scrambled eggs"
+  },
+  {
+    "recipe_id": "demo-002",
+    "title": "Tomato and Egg Fried Rice",
+    "total_minutes": 20,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "pieces"
+      },
+      {
+        "name": "tomato",
+        "quantity": 1,
+        "unit": "pieces"
+      },
+      {
+        "name": "cooked_rice",
+        "quantity": 2,
+        "unit": "bowls"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Dice the tomato, beat the eggs, and loosen the cooked rice.",
+      "Heat the oil, scramble the eggs until cooked, then add the tomato.",
+      "Add properly refrigerated cooked rice and stir-fry until thoroughly heated. Season with salt."
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Chinese tomato and egg fried rice, individual cooked rice grains stir-fried and mixed with small pieces of scrambled egg and diced cooked tomato"
+  },
+  {
+    "recipe_id": "demo-003",
+    "title": "Scallion Egg Fried Rice",
+    "total_minutes": 12,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "pieces"
+      },
+      {
+        "name": "cooked_rice",
+        "quantity": 2,
+        "unit": "bowls"
+      },
+      {
+        "name": "scallion",
+        "quantity": 1,
+        "unit": "stalk"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "soy_sauce",
+        "quantity": 1,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Chop the scallion and beat the eggs.",
+      "Heat the oil, cook the eggs, and add properly refrigerated cooked rice.",
+      "Stir-fry until the rice is thoroughly heated, then mix in soy sauce and scallion."
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Chinese egg fried rice, cooked rice grains stir-fried with scrambled egg pieces and chopped scallion"
+  },
+  {
+    "recipe_id": "demo-004",
+    "title": "Tomato-Braised Tofu",
+    "total_minutes": 18,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 2,
+        "unit": "pieces"
+      },
+      {
+        "name": "tofu",
+        "quantity": 300,
+        "unit": "g"
+      },
+      {
+        "name": "garlic",
+        "quantity": 2,
+        "unit": "cloves"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Cut the tofu into cubes, dice the tomatoes, and mince the garlic.",
+      "Heat the oil, cook the garlic briefly, then add the tomatoes and cook until juicy.",
+      "Add the tofu and a little water. Simmer until thoroughly heated and season with salt."
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Chinese braised tofu cubes in cooked tomato sauce"
+  },
+  {
+    "recipe_id": "demo-005",
+    "title": "Tomato and Egg Noodle Soup",
+    "total_minutes": 15,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 1,
+        "unit": "pieces"
+      },
+      {
+        "name": "egg",
+        "quantity": 2,
+        "unit": "pieces"
+      },
+      {
+        "name": "noodles",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "name": "oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Scramble the beaten eggs in hot oil until cooked, then set aside.",
+      "Cook the tomato until soft. Add water and bring to a boil.",
+      "Add the noodles and cook according to package instructions. Return the eggs and season with salt."
+    ],
+    "cuisine_tags": [
+      "chinese_home_style"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Chinese noodle soup with cooked scrambled egg pieces and tomato chunks"
+  },
+  {
+    "recipe_id": "demo-006",
+    "title": "Tomato and Garlic Pasta",
+    "total_minutes": 25,
+    "servings": 2,
+    "source": "Project-authored illustrative fixture (unreviewed)",
+    "source_url": null,
+    "ingredient_items": [
+      {
+        "name": "tomato",
+        "quantity": 3,
+        "unit": "pieces"
+      },
+      {
+        "name": "noodles",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "name": "garlic",
+        "quantity": 2,
+        "unit": "cloves"
+      },
+      {
+        "name": "olive_oil",
+        "quantity": 1,
+        "unit": "tbsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      }
+    ],
+    "steps": [
+      "Cook the pasta according to package instructions.",
+      "Gently cook the minced garlic in olive oil, add chopped tomatoes, and cook until soft.",
+      "Toss the cooked pasta with the tomato sauce and season with salt."
+    ],
+    "cuisine_tags": [
+      "italian"
+    ],
+    "data_quality_flags": [
+      "illustrative_not_dataset_record",
+      "not_human_verified"
+    ],
+    "image_description_en": "Italian pasta noodles coated in cooked tomato and garlic sauce"
+  }
+]

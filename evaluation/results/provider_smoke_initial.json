@@ -1,0 +1,60 @@
+{
+  "llm": {
+    "model": "qwen2.5:7b",
+    "cases": [
+      {
+        "recipe_id": "foodcom-11042",
+        "http_status": 200,
+        "seconds": 21.28,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道简单的炒饭食谱，适合4人食用，准备时间大约15分钟。所需材料包括大米、豌豆、胡萝卜、酱油和盐。\n\n制作步骤如下：\n1. 在中火上用少量油和盐将大米炒至微脆并开始变焦，期间需不断搅拌。\n2. 将米饭从锅中取出。\n3. 加入剩余的油以及蔬菜（豌豆和胡萝卜），翻炒至胡萝卜稍微软化。\n4. 将炒好的蛋加入锅中。\n5. 混合所有材料均匀。\n6. 根据口味添加适量酱油，如有需要可加少许姜粉调味。\n\n这道菜简单易做，是快速制作中式或亚洲风味菜肴的好选择。"
+      },
+      {
+        "recipe_id": "foodcom-8709",
+        "http_status": 200,
+        "seconds": 20.1,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道十分钟快速披萨食谱，适合一个人食用。所需材料包括番茄酱、新鲜蘑菇、罗勒叶、牛至和低脂莫扎里拉奶酪。\n\n1. 准备一些冷冻的比萨皮或玉米饼、肉和奶酪。\n2. 可以将火腿肠切成需要的量，或者从冷冻的切达奶酪中取出适量。\n3. 始终准备一罐或一瓶番茄酱，可以用来做披萨或其他菜肴。\n4. 将番茄酱涂在比萨皮上，放上罗勒叶和牛至，然后加上奶酪、蘑菇和肉。\n5. 把它放入烤箱或烤面包机中加热约7分钟（直到熟透）。\n\n有时可以用热意大利香肠代替原食谱中的做法。此外，还可以用玉米饼制作简单美味的开胃菜，只需番茄酱、罗勒叶、少许胡椒粉和菲达奶酪即可。"
+      },
+      {
+        "recipe_id": "foodcom-9128",
+        "http_status": 200,
+        "seconds": 17.44,
+        "used_llm": true,
+        "source_linkage_correct": true,
+        "explanation": "这是一道菠菜酸奶油煎蛋卷食谱。所需材料包括1份菠菜、6个鸡蛋、3份牛奶、辣椒粉、甜椒粉、黄油和人造黄油以及半份酸奶油。\n\n制作步骤如下：\n1. 清洗菠菜，然后蒸煮约3分钟。\n2. 菠菜叶子会变软但仍保持绿色。\n3. 在碗中混合鸡蛋、牛奶、香料（辣椒粉和甜椒粉），搅拌均匀。\n4. 在平底锅中融化一小勺黄油，加热后加入部分蛋液（每份食谱计划用2个鸡蛋，您可以根据需要调整）。\n5. 加入菠菜叶，翻煎至另一面金黄。\n6. 将煎蛋卷放在盘子上，根据口味涂抹酸奶油，然后合好即可食用。\n\n这道菜非常适合早餐或下午茶，尤其适合喜欢菠菜和酸奶油的人。"
+      }
+    ],
+    "success_rate": 1.0,
+    "mean_seconds": 19.60666666666667,
+    "limitations": "Three source-grounded calls only. Linkage checks metadata, not factual consistency. Independent human factuality ratings are pending."
+  },
+  "diffusion": {
+    "model": "runwayml/stable-diffusion-v1-5",
+    "cases": [
+      {
+        "sample": "initial_prompt",
+        "recipe_id": "demo-002",
+        "seconds": 90.53,
+        "completed": true,
+        "file": "/generated/2d32288c-0638-4699-b562-ca8f7b03e777.png",
+        "visual_review_by": "coding assistant, not independent human study",
+        "visual_review": "Plated tomato and fried egg, no recognizable fried rice. Dish mismatch."
+      },
+      {
+        "sample": "english_description",
+        "recipe_id": "demo-002",
+        "seconds": 32.55,
+        "completed": true,
+        "file": "/generated/e46152ad-5bd2-49f3-bf87-a21907e5014c.png",
+        "visual_review_by": "coding assistant, not independent human study",
+        "visual_review": "Rice dish recognizable, but fried egg and additional green vegetables differ from the source scrambled-egg recipe. Partial match."
+      }
+    ],
+    "technical_success_rate": 1.0,
+    "mean_seconds": 61.54,
+    "limitations": "Two sequential development images of one illustrative dish; prompt changed after first image. Not an independent or representative quality benchmark. Extra visual ingredients remain."
+  }
+}

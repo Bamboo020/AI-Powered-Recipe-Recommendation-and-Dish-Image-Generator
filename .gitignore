@@ -1,0 +1,16 @@
+.env
+.venv/
+.uv-cache/
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+*.sqlite3
+.DS_Store
+generated/
+*.pt
+*.pth
+*.safetensors
+output/
+training_outputs/
+data/
